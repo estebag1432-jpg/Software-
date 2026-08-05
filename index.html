@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Liceo — Sistema v6</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -15,13 +15,9 @@
   --accent:#c8f04c;--accent2:#6ee7b7;--danger:#f87171;--warn:#fbbf24;--info:#60a5fa;
 }
 body{background:var(--bg);color:var(--text);min-height:100vh}
-.nav-btn{transition:all .15s;white-space:nowrap;border:none;cursor:pointer;color:var(--muted);background:transparent}
-#header-actions-mobile{display:none;position:relative}
-#header-actions-mobile-menu{display:none;position:absolute;right:0;top:36px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px;flex-direction:column;gap:4px;z-index:60;min-width:150px}
-#header-actions-mobile-menu.open{display:flex}
-#header-actions-mobile-menu button{width:100%;text-align:left}
+.nav-btn{transition:all .15s;white-space:nowrap;border:none;cursor:pointer}
 .nav-btn.active{background:var(--accent);color:#111;font-weight:600}
-.nav-btn:not(.active):hover{background:var(--surface3);color:var(--text)}
+.nav-btn:not(.active):hover{background:var(--surface3)}
 input[type=number],input[type=text],textarea,select{
   background:var(--surface2);border:1px solid var(--border);color:var(--text);
   border-radius:6px;padding:5px 8px;font-size:13px;outline:none;width:100%;transition:border-color .15s
@@ -78,11 +74,8 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
 ══════════════════════════════════════════════════ */
 @media (max-width: 640px){
   main{padding-left:10px;padding-right:10px}
-  header#header-global,header#header-empresa{padding-left:10px;padding-right:10px;gap:6px}
+  header#header-global,header#header-empresa{padding-left:10px;padding-right:10px;gap:8px}
   header#header-global span.font-semibold,header#header-empresa span.font-semibold{display:none}
-  header#header-global nav#nav-global{flex:1 1 auto;min-width:0}
-  header#header-global #header-actions-desktop{display:none}
-  header#header-global #header-actions-mobile{display:flex}
   .stat-card{padding:10px 12px}
   .stat-card .text-2xl{font-size:1.35rem}
   .card{border-radius:10px}
@@ -103,10 +96,64 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
   table.tbl-mobile-cards td input[type=number],table.tbl-mobile-cards td input[type=text]{width:100px;text-align:right;margin-left:auto}
   .card.p-6{padding:16px}
 }
+
+/* ══════════════════════════════════════════════════
+   TOUCH: cualquier dispositivo con dedo (no depende de ancho/orientación)
+══════════════════════════════════════════════════ */
+@media (pointer: coarse){
+  .btn-primary,.btn-ghost,.btn-danger,.btn-info{padding-top:9px;padding-bottom:9px;min-height:36px}
+  input[type=number],input[type=text],input[type=date],textarea,select{padding-top:8px;padding-bottom:8px;font-size:14px;min-height:36px}
+  input[type=checkbox]{min-width:18px;min-height:18px}
+  .nav-btn{min-height:34px}
+  /* scroll horizontal más fluido en iOS Safari */
+  .overflow-x-auto,.overflow-y-auto{-webkit-overflow-scrolling:touch}
+}
+
+/* ══════════════════════════════════════════════════
+   CELULAR EN HORIZONTAL — poco alto, harto ancho.
+   max-height en vez de max-width: así agarra el celular acostado
+   sin confundirlo con una tablet u laptop (esas tienen más alto).
+══════════════════════════════════════════════════ */
+@media (orientation: landscape) and (max-height: 500px){
+  header#header-global,header#header-empresa{padding-top:5px;padding-bottom:5px;gap:6px;position:sticky}
+  header#header-global .flex.items-center.gap-2.shrink-0 > div{width:20px;height:20px}
+  main{padding-top:8px;padding-bottom:56px} /* deja espacio abajo pa'l botón flotante */
+  #btn-input-flotante{width:38px;height:38px;font-size:15px;bottom:8px;right:8px}
+  #nav-global,#nav-empresa{gap:4px}
+  #nav-global .nav-btn,#nav-empresa .nav-btn{font-size:11px;padding:4px 8px}
+  .card.p-4{padding:8px}
+  .card.p-6{padding:10px}
+  .stat-card{padding:6px 10px}
+  .stat-card .text-2xl{font-size:1.1rem}
+  #modal-overlay{padding:6px;align-items:flex-start}
+  #modal-overlay .card.p-6{padding:12px;max-height:96vh;margin-top:6px;overflow-y:auto}
+  #modal-overlay h3{margin-bottom:8px}
+  .emp-body{padding:10px}
+  .emp-header{padding:8px 10px}
+}
+
+/* ══════════════════════════════════════════════════
+   SAFE AREA — notch/cámara lateral en horizontal (iPhone y similares)
+══════════════════════════════════════════════════ */
+@supports (padding: max(0px)){
+  header#header-global,header#header-empresa{
+    padding-left:max(16px, env(safe-area-inset-left));
+    padding-right:max(16px, env(safe-area-inset-right));
+  }
+  main{
+    padding-left:max(16px, env(safe-area-inset-left));
+    padding-right:max(16px, env(safe-area-inset-right));
+  }
+  #btn-input-flotante{
+    right:max(20px, calc(env(safe-area-inset-right) + 12px));
+    bottom:max(20px, calc(env(safe-area-inset-bottom) + 12px));
+  }
+}
 </style>
 </head>
 <body>
 <div id="toast" class="toast"></div>
+<button id="btn-input-flotante" onclick="showGlobal('input')" style="position:fixed;bottom:20px;right:20px;z-index:150;background:var(--accent);color:#fff;border:none;border-radius:50%;width:52px;height:52px;font-size:20px;box-shadow:0 4px 12px rgba(0,0,0,.3);cursor:pointer;display:flex;align-items:center;justify-content:center" title="Input">✍️</button>
 
 <!-- HEADER GLOBAL -->
 <header id="header-global" style="background:var(--surface);border-bottom:1px solid var(--border)" class="px-4 py-3 flex items-center gap-4 sticky top-0 z-50">
@@ -119,9 +166,10 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
   <nav class="flex gap-1 flex-1 overflow-x-auto" id="nav-global">
     <button onclick="showGlobal('home')" class="nav-btn active px-3 py-1.5 rounded-md text-xs" id="nav-home">🏠 Personal</button>
     <button onclick="showGlobal('empresas')" class="nav-btn px-3 py-1.5 rounded-md text-xs" id="nav-empresas">🏢 Empresas</button>
-    <button onclick="irAVentasDirecto()" class="px-3 py-1.5 rounded-md text-xs font-semibold" style="background:var(--accent2);color:#111;white-space:nowrap;border:none;cursor:pointer">🧾 Ventas</button>
+    <button onclick="showGlobal('input')" class="nav-btn px-3 py-1.5 rounded-md text-xs" id="nav-input">✍️ Input</button>
+    <button onclick="showGlobal('mando')" class="nav-btn px-3 py-1.5 rounded-md text-xs" id="nav-mando">🎯 Mando Central</button>
   </nav>
-  <div class="flex items-center gap-2 shrink-0" id="header-actions-desktop">
+  <div class="flex items-center gap-2 shrink-0">
     <div id="save-indicator" style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)">
       <span id="save-dot" style="width:6px;height:6px;border-radius:50%;background:var(--muted);display:inline-block;transition:background .3s"></span>
       <span id="save-label">Guardado</span>
@@ -130,15 +178,6 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
     <button onclick="toggleTema()" class="btn-ghost" id="btn-tema" style="padding:5px 10px;font-size:11px">🌙 Oscuro</button>
     <button onclick="cargarBackup()" class="btn-ghost" style="padding:5px 10px;font-size:11px">⬇ Exportar</button>
     <button onclick="importarBackup()" class="btn-ghost" style="padding:5px 10px;font-size:11px">⬆ Importar</button>
-  </div>
-  <div class="shrink-0" id="header-actions-mobile">
-    <button onclick="document.getElementById('header-actions-mobile-menu').classList.toggle('open')" class="btn-ghost" style="padding:5px 9px;font-size:14px">⚙️</button>
-    <div id="header-actions-mobile-menu">
-      <button onclick="guardarManual()" class="btn-ghost" style="font-size:11px">💾 Guardar</button>
-      <button onclick="toggleTema()" class="btn-ghost" id="btn-tema-mobile" style="font-size:11px">🌙 Oscuro</button>
-      <button onclick="cargarBackup()" class="btn-ghost" style="font-size:11px">⬇ Exportar</button>
-      <button onclick="importarBackup()" class="btn-ghost" style="font-size:11px">⬆ Importar</button>
-    </div>
   </div>
 </header>
 
@@ -433,7 +472,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
   <!-- Interior empresa — se muestra al entrar -->
   <div id="empresa-interior">
 
-    <!-- TABS LICEO (bodega, salsas, planificacion, empleados, finanzas) -->
+    <!-- TABS LICEO (bodega, recetas, planificacion, empleados, finanzas) -->
     <div id="emp-tabs-liceo" style="display:none">
 
       <div id="emp-tab-dashboard" class="emp-tab-panel space-y-4">
@@ -536,7 +575,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
               <button onclick="agregarInsumo()" class="btn-primary">+ Insumo</button>
               <button onclick="agregarBebida()" class="btn-primary" style="background:var(--info)">🥤 + Bebida</button>
               <button onclick="agregarProducto()" class="btn-primary">+ Producto</button>
-              <button onclick="showEmpresaTab('emp-salsas')" class="btn-ghost">🥣 Salsas →</button>
+              <button onclick="showEmpresaTab('emp-recetas')" class="btn-ghost">📋 Recetas →</button>
               <button onclick="showEmpresaTab('emp-planificacion')" class="btn-ghost">Compras →</button>
             </div>
           </div>
@@ -549,7 +588,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
               </div>
             </div>
             <div class="overflow-x-auto">
-              <table class="w-full tbl-mobile-cards" style="min-width:700px">
+              <table class="w-full tbl-mobile-cards" style="min-width:900px">
                 <thead><tr>
                   <th class="th text-left">Nombre</th>
                   <th class="th">Categoría</th>
@@ -558,33 +597,36 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
                   <th class="th">Unidad</th>
                   <th class="th text-right">Costo unit.</th>
                   <th class="th text-right" id="th-stock-label">Stock</th>
+                  <th class="th">Lugar</th>
+                  <th class="th">Día</th>
                   <th class="th w-10"></th>
                 </tr></thead>
                 <tbody id="tabla-insumos"></tbody>
               </table>
+              <datalist id="dl-lugares-compra"></datalist>
             </div>
           </div>
           <div class="card p-4">
             <h2 class="font-semibold text-sm mb-1">Productos & Recetas</h2>
-            <p class="text-xs mb-4" style="color:var(--muted)">Incluye salsas vinculadas en el costo de fabricación</p>
+            <p class="text-xs mb-4" style="color:var(--muted)">Incluye recetas vinculadas en el costo de fabricación</p>
             <div id="lista-productos" class="space-y-3"></div>
           </div>
         </div>
       </div>
 
-      <!-- Salsas Liceo -->
-      <div id="emp-tab-salsas" class="emp-tab-panel space-y-4" style="display:none">
+      <!-- Recetas Liceo -->
+      <div id="emp-tab-recetas" class="emp-tab-panel space-y-4" style="display:none">
         <div class="card p-4">
           <p class="text-xs font-medium mb-3" style="color:var(--muted)">ACCIONES RÁPIDAS</p>
           <div class="flex flex-wrap gap-2">
-            <button onclick="crearSalsa()" class="btn-primary">🥣 Crear salsa</button>
+            <button onclick="crearReceta()" class="btn-primary">📋 Crear receta</button>
             <button onclick="showEmpresaTab('emp-bodega')" class="btn-ghost">← Bodega</button>
           </div>
         </div>
-        <div id="lista-salsas" class="space-y-3"></div>
-        <div id="salsas-empty" class="card p-8 text-center" style="color:var(--muted)">
-          <div class="text-3xl mb-2">🥣</div>
-          <p class="text-sm">Sin salsas. Crea tu primera salsa arriba.</p>
+        <div id="lista-recetas" class="space-y-3"></div>
+        <div id="recetas-empty" class="card p-8 text-center" style="color:var(--muted)">
+          <div class="text-3xl mb-2">📋</div>
+          <p class="text-sm">Sin recetas. Crea tu primera receta arriba.</p>
         </div>
       </div>
 
@@ -624,7 +666,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
         <div class="card p-4"><h3 class="font-semibold text-sm mb-3">Stock Materia Prima</h3><div id="stock-mp" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div></div>
         <div class="card p-4">
           <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
-            <div><h3 class="font-semibold text-sm">Compras Semanales — en Paquetes</h3><p class="text-xs mt-0.5" style="color:var(--muted)">Incluye insumos de salsas. Decimales → entero superior.</p></div>
+            <div><h3 class="font-semibold text-sm">Compras Semanales — en Paquetes</h3><p class="text-xs mt-0.5" style="color:var(--muted)">Incluye insumos de recetas. Decimales → entero superior.</p></div>
             <div id="costo-total-compras" class="stat-card text-right"><div class="text-xs" style="color:var(--muted)">Total estimado</div><div class="font-bold text-lg" style="color:var(--warn)">$0</div></div>
           </div>
           <div class="overflow-x-auto">
@@ -649,12 +691,17 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
             <button onclick="registrarIngresoBodega()" class="btn-ghost">↑ Ingreso negocio</button>
             <button onclick="registrarEgresoBodega()" class="btn-ghost">↓ Egreso negocio</button>
             <button onclick="resetearVentasSemana()" class="btn-danger">↺ Resetear semana</button>
+            <button onclick="renderHistorialVentasVendedores()" class="btn-ghost">📊 Historial ventas</button>
           </div>
         </div>
         <div id="lista-empleados" class="space-y-3"></div>
         <div class="card p-4">
           <h3 class="font-semibold text-sm mb-3">Totales Semana</h3>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="totales-emp"></div>
+        </div>
+        <div class="card p-4">
+          <h3 class="font-semibold text-sm mb-3">📊 Detalle de productos vendidos</h3>
+          <div id="detalle-ventas-liceo"></div>
         </div>
         <div class="card p-4">
           <h3 class="font-semibold text-sm mb-3">Libro Contable Semanal</h3>
@@ -757,11 +804,22 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
       </div>
       <div id="emp-tab-productos" class="emp-tab-panel space-y-4" style="display:none">
         <div class="card p-4">
-          <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
             <h3 class="font-semibold text-sm">Productos de la Empresa</h3>
+            <label class="flex items-center gap-2 cursor-pointer text-xs" style="color:var(--muted)">
+              <input type="checkbox" id="ei-toggle-insumos" onchange="toggleUsaInsumosEmpresa(this.checked)" style="accent-color:var(--accent);width:14px;height:14px">
+              Usar bodega/receta de materia prima
+            </label>
             <button onclick="agregarProductoEmpresa()" class="btn-primary">+ Producto</button>
           </div>
           <div id="ei-lista-productos" class="space-y-3"></div>
+        </div>
+        <div id="ei-bodega-insumos-wrap" class="card p-4" style="display:none">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-semibold text-sm">Materia prima — bodega propia</h3>
+            <button onclick="agregarInsumoEmpresa()" class="btn-primary">+ Insumo</button>
+          </div>
+          <div id="ei-lista-insumos" class="space-y-2"></div>
         </div>
       </div>
       <div id="emp-tab-empleados" class="emp-tab-panel space-y-4" style="display:none">
@@ -773,6 +831,10 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
           </div>
         </div>
         <div id="ei-lista-empleados" class="space-y-3"></div>
+        <div class="card p-4">
+          <h3 class="font-semibold text-sm mb-3">📊 Detalle de productos vendidos</h3>
+          <div id="detalle-ventas-empresa"></div>
+        </div>
       </div>
       <div id="emp-tab-libro" class="emp-tab-panel space-y-4" style="display:none">
         <div class="card p-4">
@@ -796,6 +858,57 @@ input[type=number]::-webkit-inner-spin-button{opacity:1}
 
   </div><!-- /empresa-interior -->
 </div><!-- /global-empresas -->
+
+<!-- ══════════════════════════════════════════
+     PANEL GLOBAL: INPUT (atajos a todo lo que se escribe a mano)
+══════════════════════════════════════════ -->
+<div id="global-input" style="display:none">
+  <p class="text-xs mb-3" style="color:var(--muted)">Todos los lugares donde cargás datos a mano, en un solo lugar. Tocá una tarjeta para ir directo a escribir ahí.</p>
+  <div id="input-lista" class="space-y-2"></div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PANEL GLOBAL: MANDO CENTRAL
+══════════════════════════════════════════ -->
+<div id="global-mando" style="display:none" class="space-y-4">
+
+  <!-- 🖱️ VENTA RÁPIDA — un click, un vendedor, una venta -->
+  <div class="card p-4">
+    <h3 class="font-semibold text-sm mb-3">🖱️ Venta rápida</h3>
+    <div id="mando-venta-rapida"></div>
+  </div>
+
+  <!-- 🏭 PRODUCCIÓN — qué fabricar esta semana -->
+  <div class="card p-4">
+    <h3 class="font-semibold text-sm mb-3">🏭 Producción</h3>
+    <div id="mando-produccion"></div>
+  </div>
+
+  <!-- 🛒 COMPRAS — solo lo que falta -->
+  <div class="card p-4">
+    <h3 class="font-semibold text-sm mb-3">🛒 Compras</h3>
+    <div id="mando-compras"></div>
+  </div>
+
+  <!-- 📦 MATERIA PRIMA — stock completo -->
+  <div class="card p-4">
+    <h3 class="font-semibold text-sm mb-3">📦 Materia Prima</h3>
+    <div id="mando-materiaprima"></div>
+  </div>
+
+  <!-- 💰 DINERO DISPONIBLE -->
+  <div class="card p-4">
+    <h3 class="font-semibold text-sm mb-3">💰 Dinero Disponible</h3>
+    <div id="mando-dinero"></div>
+  </div>
+
+  <!-- 🔔 ALERTAS — resto de misiones (cobros, metas, pérdidas, deudas) -->
+  <div class="card p-4">
+    <h3 class="font-semibold text-sm mb-3">🔔 Alertas</h3>
+    <div id="mando-alertas"></div>
+  </div>
+
+</div>
 
 <!-- planificacion/empleados/finanzas now live inside empresa-interior -->
 
@@ -836,20 +949,21 @@ let S = {
     {id:15,nombre:'Choclo',costoPaquete:900,cantPaquete:300,unidad:'Gramos',stock:0,categoria:'sandwich',perecible:true},
   ],
   productos: [
-    {id:1,nombre:'Alfajor clásico',precioVenta:1200,comision:100,receta:{1:2,2:25,3:20,4:1,5:1},salsas:[],meta:80,stockTerminado:0,fases:[]},
-    {id:2,nombre:'Alfajor bonobon',precioVenta:1300,comision:100,receta:{1:2,2:25,6:1,4:1,5:1},salsas:[],meta:40,stockTerminado:0,fases:[]},
-    {id:3,nombre:'Alfajor oreo',precioVenta:1400,comision:100,receta:{1:2,2:20,7:2,3:20,4:1,5:1},salsas:[],meta:30,stockTerminado:0,fases:[]},
-    {id:4,nombre:'Alfajor mermelada',precioVenta:1300,comision:100,receta:{1:2,8:20,3:20,4:1,5:1},salsas:[],meta:30,stockTerminado:0,fases:[]},
-    {id:5,nombre:'Alfajor nutella',precioVenta:1500,comision:100,receta:{1:2,10:20,3:20,4:1,5:1},salsas:[],meta:20,stockTerminado:0,fases:[]},
-    {id:6,nombre:'Sandwich pollo',precioVenta:2500,comision:150,receta:{13:69,14:13,15:18},salsas:[],meta:40,stockTerminado:0,fases:[]},
-    {id:7,nombre:'Sandwich hamburguesa',precioVenta:2800,comision:200,receta:{11:1,12:25},salsas:[],meta:25,stockTerminado:0,fases:[]},
+    {id:1,nombre:'Alfajor clásico',precioVenta:1200,comision:100,receta:{1:2,2:25,3:20,4:1,5:1},recetas:[],meta:80,stockTerminado:0,fases:[]},
+    {id:2,nombre:'Alfajor bonobon',precioVenta:1300,comision:100,receta:{1:2,2:25,6:1,4:1,5:1},recetas:[],meta:40,stockTerminado:0,fases:[]},
+    {id:3,nombre:'Alfajor oreo',precioVenta:1400,comision:100,receta:{1:2,2:20,7:2,3:20,4:1,5:1},recetas:[],meta:30,stockTerminado:0,fases:[]},
+    {id:4,nombre:'Alfajor mermelada',precioVenta:1300,comision:100,receta:{1:2,8:20,3:20,4:1,5:1},recetas:[],meta:30,stockTerminado:0,fases:[]},
+    {id:5,nombre:'Alfajor nutella',precioVenta:1500,comision:100,receta:{1:2,10:20,3:20,4:1,5:1},recetas:[],meta:20,stockTerminado:0,fases:[]},
+    {id:6,nombre:'Sandwich pollo',precioVenta:2500,comision:150,receta:{13:69,14:13,15:18},recetas:[],meta:40,stockTerminado:0,fases:[]},
+    {id:7,nombre:'Sandwich hamburguesa',precioVenta:2800,comision:200,receta:{11:1,12:25},recetas:[],meta:25,stockTerminado:0,fases:[]},
   ],
-  salsas: [],
+  salsas: [], // legado — la migración lo copia a recetas si hay datos guardados con esto
+  recetas: [],
   empleados: [
-    {id:1,nombre:'Esteban',sinComision:true,entregados:{},almuerzo:{},descuentos:[],vueltos:[],stockDescontado:{}},
-    {id:2,nombre:'Ignacio',sinComision:false,entregados:{},almuerzo:{},descuentos:[],vueltos:[],stockDescontado:{}},
-    {id:3,nombre:'Naima',sinComision:false,entregados:{},almuerzo:{},descuentos:[],vueltos:[],stockDescontado:{}},
-    {id:4,nombre:'Nelson',sinComision:false,entregados:{},almuerzo:{},descuentos:[],vueltos:[],stockDescontado:{}},
+    {id:1,nombre:'Esteban',sinComision:true,entregados:{},almuerzo:{},descuentos:[],vueltos:[],stockDescontado:{},miniBodega:{}},
+    {id:2,nombre:'Ignacio',sinComision:false,entregados:{},almuerzo:{},descuentos:[],vueltos:[],stockDescontado:{},miniBodega:{}},
+    {id:3,nombre:'Naima',sinComision:false,entregados:{},almuerzo:{},descuentos:[],vueltos:[],stockDescontado:{},miniBodega:{}},
+    {id:4,nombre:'Nelson',sinComision:false,entregados:{},almuerzo:{},descuentos:[],vueltos:[],stockDescontado:{},miniBodega:{}},
   ],
   libroContable: [],
   historialSemanas: [],
@@ -867,6 +981,7 @@ let S = {
   ],
   nextTxId: 1,
   nextSalsaId: 1,
+  nextRecetaId: 1,
   nextProdId: 8,
   invMode: 'real',
   semanaActual: getNombreSemana(),
@@ -896,25 +1011,39 @@ function fmt(n){return '$'+Math.round(n||0).toLocaleString('es-CL');}
 function fmtN(n){return Math.round(n||0).toLocaleString('es-CL');}
 function fechaHoy(){return new Date().toLocaleDateString('es-CL');}
 function idNext(){return S.nextTxId++;}
-function cu(ins){return ins.cantPaquete>0?ins.costoPaquete/ins.cantPaquete:0;}
+function cu(ins){
+  if(ins.cantPaquete<=0) return 0;
+  const fijado=(ins.proveedores||[]).find(p=>p.fijado);
+  const costoPaq=fijado?fijado.precioPaquete:ins.costoPaquete;
+  return (costoPaq||0)/ins.cantPaquete;
+}
 
-// Costo total de ingredientes de una salsa (para toda la receta de la salsa)
-function costoSalsaTotal(salsa){
-  return salsa.ingredientes.reduce((s,ing)=>{
+// Convierte cantidad cruda de insumo (gramos/unidades) a paquetes.
+// redondear=true → Math.ceil, para "cuántos paquetes necesito/faltan" (comprar de menos nunca alcanza).
+// redondear=false → con 1 decimal, para "cuánto tengo" (redondear hacia arriba mentiría sobre el stock real).
+function enPaquetes(cantidadCruda,cantPaquete,redondear){
+  if(!cantPaquete||cantPaquete<=0) return 0;
+  const paq=cantidadCruda/cantPaquete;
+  return redondear?Math.ceil(paq):Math.round(paq*10)/10;
+}
+
+// Costo total de ingredientes de una receta (para toda la receta)
+function costoRecetaTotal(receta){
+  return receta.ingredientes.reduce((s,ing)=>{
     const ins=S.insumos.find(i=>i.id===ing.insId);
     return s+(ins?cu(ins)*ing.gramos:0);
   },0);
 }
 // Alias para compatibilidad con render de bodega
-function costoSalsa(salsa){return costoSalsaTotal(salsa);}
+function costoReceta(receta){return costoRecetaTotal(receta);}
 
-// Costo de UNA PORCIÓN de salsa aplicada a un producto
-// sv.gramos = gramos de salsa que va en 1 unidad del producto
-// La receta de la salsa define cuántos gramos produce en total
-function costoSalsaPorcion(salsa, gramosUsados){
-  const totalReceta = salsa.ingredientes.reduce((s,i)=>s+i.gramos,0);
+// Costo de UNA PORCIÓN de receta aplicada a un producto
+// sv.gramos = gramos de receta que va en 1 unidad del producto
+// La receta define cuántos gramos produce en total
+function costoRecetaPorcion(receta, gramosUsados){
+  const totalReceta = receta.ingredientes.reduce((s,i)=>s+i.gramos,0);
   if(totalReceta<=0) return 0;
-  const cTot = costoSalsaTotal(salsa);
+  const cTot = costoRecetaTotal(receta);
   return (cTot / totalReceta) * gramosUsados;
 }
 
@@ -925,9 +1054,9 @@ function costoFab(prod){
     const ins=S.insumos.find(i=>i.id==id);
     if(ins) c+=cu(ins)*(+cant||0);
   }
-  (prod.salsas||[]).forEach(sv=>{
-    const salsa=S.salsas.find(s=>s.id===sv.salsaId);
-    if(salsa) c+=costoSalsaPorcion(salsa, sv.gramos||0);
+  (prod.recetas||[]).forEach(sv=>{
+    const receta=S.recetas.find(r=>r.id===sv.recetaId);
+    if(receta) c+=costoRecetaPorcion(receta, sv.gramos||0);
   });
   return c;
 }
@@ -951,21 +1080,487 @@ function fmtSafe(n){
 }
 
 // ══════════════════════════════════════════════════
-// NAVEGACIÓN GLOBAL v6
+// NAVEGACIÓN GLOBAL v6 — MANDO CENTRAL, layout apilado por secciones
 // ══════════════════════════════════════════════════
+function renderMandoCentral(){
+  window._mandoAcciones={}; // reset por render, indexado por 'seccion:i' para que cada tarjeta encuentre su accion sin pisar a otra seccion
+  renderMandoVentaRapida();
+  renderMandoProduccion();
+  renderMandoCompras();
+  renderMandoMateriaPrima();
+  renderMandoDinero();
+  renderMandoAlertasResto();
+}
+function _runMandoAccion(key){ const fn=window._mandoAcciones&&window._mandoAcciones[key]; if(fn) fn(); }
+
+// Venta rápida en Mando Central: 1 click = 1 venta, atada SIEMPRE a un vendedor (nunca anónima, para evitar bugs de atribución)
+function renderMandoVentaRapida(){
+  const cont=document.getElementById('mando-venta-rapida');
+  if(!cont) return;
+  if(!S.empleados.length){
+    cont.innerHTML='<p class="text-xs" style="color:var(--muted)">No hay vendedores cargados todavía — agrega uno en Empleados.</p>';
+    return;
+  }
+  // Vendedor activo, persistido; por defecto Esteban si existe, si no el primero de la lista
+  if(!S._mandoVentaVendedorId || !S.empleados.find(e=>e.id===S._mandoVentaVendedorId)){
+    const esteban=S.empleados.find(e=>e.nombre==='Esteban');
+    S._mandoVentaVendedorId=(esteban||S.empleados[0]).id;
+  }
+  const selectorHTML=`<div class="flex items-center gap-2 mb-3 flex-wrap">
+    <span class="text-xs" style="color:var(--muted)">Vendedor</span>
+    <select onchange="S._mandoVentaVendedorId=+this.value;guardarEstado();renderMandoVentaRapida()" style="font-size:13px;font-weight:600">
+      ${S.empleados.map(e=>`<option value="${e.id}" ${e.id===S._mandoVentaVendedorId?'selected':''}>${e.nombre}</option>`).join('')}
+    </select>
+  </div>`;
+  if(!S.productos.length){
+    cont.innerHTML=selectorHTML+'<p class="text-xs" style="color:var(--muted)">No hay productos cargados.</p>';
+    return;
+  }
+  const botonesHTML=`<div class="grid grid-cols-2 gap-2">${S.productos.map(p=>{
+    const sinStock=(p.stockTerminado||0)<=0;
+    return `<button onclick="registrarVentaClick(${p.id})" ${sinStock?'disabled':''} class="card2 p-3 text-left" style="${sinStock?'opacity:.4;cursor:not-allowed':'cursor:pointer'}">
+      <div class="text-sm font-semibold">${p.nombre}</div>
+      <div class="text-xs" style="color:var(--muted)">${fmt(p.precioVenta||0)} · stock ${p.stockTerminado||0}</div>
+    </button>`;
+  }).join('')}</div>`;
+  cont.innerHTML=selectorHTML+botonesHTML;
+}
+function registrarVentaClick(prodId){
+  const emp=S.empleados.find(e=>e.id===S._mandoVentaVendedorId);
+  const prod=S.productos.find(p=>p.id===prodId);
+  if(!emp||!prod) return;
+  if((prod.stockTerminado||0)<=0){ toast('Sin stock de '+prod.nombre); return; }
+  prod.stockTerminado-=1;
+  if(!emp.miniBodega) emp.miniBodega={};
+  emp.miniBodega[prodId]=Math.max(0,(emp.miniBodega[prodId]||0)-1); // sale de SU caja física
+
+  // Snapshot diario — misma estructura que usa Cobrar, para que entre bien al historial de ventas por vendedor
+  if(!S.registrosDiarios) S.registrosDiarios=[];
+  const hoy=fechaHoy();
+  let rdHoy=S.registrosDiarios.find(r=>r.fecha===hoy);
+  if(!rdHoy){rdHoy={fecha:hoy,ventasPorEmp:{},totalBruto:0,ventasPorProducto:{},ventasPorEmpleadoProducto:{}};S.registrosDiarios.push(rdHoy);}
+  const claveEmp='Liceo — '+emp.nombre;
+  if(!rdHoy.ventasPorEmpleadoProducto[claveEmp]) rdHoy.ventasPorEmpleadoProducto[claveEmp]={};
+  rdHoy.ventasPorEmpleadoProducto[claveEmp][prodId]=(rdHoy.ventasPorEmpleadoProducto[claveEmp][prodId]||0)+1;
+  rdHoy.ventasPorEmp[claveEmp]=(rdHoy.ventasPorEmp[claveEmp]||0)+(prod.precioVenta||0);
+  rdHoy.totalBruto=(rdHoy.totalBruto||0)+(prod.precioVenta||0);
+
+  // Venta directa, sin comisión — mismo criterio que el botón 💵 de venta rápida que ya existía en Bodega
+  agregarTx('ingreso',`Venta rápida — ${prod.nombre} (vendedor: ${emp.nombre})`,prod.precioVenta||0,'Venta directa');
+
+  guardarEstado();
+  toast(`✓ ${prod.nombre} — ${fmt(prod.precioVenta||0)} (${emp.nombre})`);
+  renderMandoVentaRapida();
+  renderMandoProduccion();
+  renderMandoCompras();
+}
+
+// ── Tarjeta genérica reusada por todas las secciones de Mando Central ──
+function _cardMando(color,emoji,tag,resumen,desglose,accionKey,botonExtraHtml){
+  const desgHTML=(desglose||[]).map(d=>
+    `<div class="flex justify-between py-0.5"><span class="text-xs" style="color:var(--muted)">${d.label}</span><span class="text-xs font-medium">${d.val}</span></div>`
+  ).join('');
+  const btnAccion=accionKey?`<button onclick="_runMandoAccion('${accionKey}')" class="btn-ghost" style="width:100%;margin-top:6px;font-size:11px">Ir a resolver →</button>`:'';
+  return `<div class="card2 p-3" style="border-color:${color}">
+    <div class="flex items-center gap-3">
+      <span style="font-size:16px">${emoji}</span>
+      <div class="flex-1">
+        ${tag?`<span class="text-xs" style="background:${color}22;color:${color};padding:0 5px;border-radius:4px">${tag}</span>`:''}
+        <div class="text-sm mt-0.5">${resumen}</div>
+      </div>
+    </div>
+    ${desgHTML?`<div class="mt-2 pt-2 space-y-0.5" style="border-top:1px solid var(--border)">${desgHTML}</div>`:''}
+    ${botonExtraHtml||''}
+    ${btnAccion}
+  </div>`;
+}
+
+// ══════════════════════════════════════════════════
+// FASE 1 — 🛒 COMPRAS: solo lo que falta, con acción directa a la pestaña de compra
+// ══════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+// PRODUCCIÓN — 🏭 qué fabricar esta semana, con detalle de receta colapsado
+// Solo Liceo por ahora — Empresas no tiene sub-sistema de recetas vinculadas.
+// ══════════════════════════════════════════════════
+function renderMandoProduccion(){
+  const cont=document.getElementById('mando-produccion');
+  if(!cont) return;
+
+  const productos=S.productos.filter(p=>(p.meta||0)>(p.stockTerminado||0))
+    .sort((a,b)=>(prodHechoEstaSemana(a)?1:0)-(prodHechoEstaSemana(b)?1:0));
+  if(!productos.length){
+    cont.innerHTML='<p class="text-xs text-center py-3" style="color:var(--muted)">✓ Nada pendiente de fabricar esta semana.</p>';
+    return;
+  }
+
+  const demRecetas=calcularDemandaRecetas();
+  const totalHechos=productos.filter(prodHechoEstaSemana).length;
+
+  cont.innerHTML=`<div class="text-xs mb-2" style="color:var(--muted)">${totalHechos}/${productos.length} marcados como hechos</div>`
+    + productos.map(p=>{
+    const hecho=prodHechoEstaSemana(p);
+    const faltan=Math.ceil((p.meta||0)-(p.stockTerminado||0));
+    const recetasVinc=(p.recetas||[]).map(sv=>S.recetas.find(r=>r.id===sv.recetaId)).filter(Boolean);
+    const detalleRecetas=recetasVinc.map(receta=>{
+      const d=demRecetas[receta.id];
+      if(!d) return '';
+      const filasIng=Object.entries(d.ing).map(([insId,cant])=>{
+        const ins=S.insumos.find(i=>i.id==insId);
+        if(!ins) return '';
+        const u=ins.unidad==='Gramos'?'g':'u';
+        return `<div class="flex justify-between py-0.5"><span class="text-xs" style="color:var(--muted)">${ins.nombre}</span><span class="text-xs font-medium">${cant.toFixed(1)}${u}</span></div>`;
+      }).join('');
+      return `<div class="mt-1">
+        <div class="text-xs font-semibold" style="color:var(--accent)">📋 ${receta.nombre} — ${d.grTotales.toFixed(1)}g totales</div>
+        ${filasIng}
+      </div>`;
+    }).join('');
+    return `<div class="card2 p-3" style="${hecho?'opacity:.55':''}">
+      <div class="flex items-center gap-3">
+        <input type="checkbox" ${hecho?'checked':''} onchange="toggleProduccionHecha(${p.id})" style="accent-color:var(--accent);width:16px;height:16px;flex-shrink:0;cursor:pointer">
+        <span style="font-size:16px">🏭</span>
+        <div class="flex-1">
+          <div class="text-sm" style="${hecho?'text-decoration:line-through':''}">${p.nombre} — hacer ${faltan} u</div>
+        </div>
+      </div>
+      ${detalleRecetas?`<details class="mt-2 pt-2" style="border-top:1px solid var(--border)">
+        <summary class="text-xs cursor-pointer" style="color:var(--muted)">▸ Ver receta</summary>
+        <div class="mt-1">${detalleRecetas}</div>
+      </details>`:''}
+    </div>`;
+  }).join('');
+}
+
+// Tick "ya fabriqué esto" — vive por producto, atado a semana actual. Cambia semana → se resetea solo.
+function prodHechoEstaSemana(p){
+  return !!(p.produccionHecha && p.produccionHecha.semana===S.semanaActual && p.produccionHecha.hecho);
+}
+function toggleProduccionHecha(prodId){
+  const p=S.productos.find(x=>x.id===prodId);
+  if(!p) return;
+  const yaHecho=prodHechoEstaSemana(p);
+  if(!yaHecho){
+    // Marcar como hecho: la cantidad que faltaba fabricar se suma al stock de bodega
+    const faltan=Math.max(0,Math.ceil((p.meta||0)-(p.stockTerminado||0)));
+    p.stockTerminado=(p.stockTerminado||0)+faltan;
+    p.produccionHecha={semana:S.semanaActual,hecho:true,cantidadAgregada:faltan};
+  } else {
+    // Desmarcar: revertir exactamente lo que se sumó al marcar (no recalcula de nuevo, por si la meta cambió mientras tanto)
+    const cant=(p.produccionHecha&&p.produccionHecha.cantidadAgregada)||0;
+    p.stockTerminado=Math.max(0,(p.stockTerminado||0)-cant);
+    p.produccionHecha={semana:S.semanaActual,hecho:false,cantidadAgregada:0};
+  }
+  guardarEstado();
+  renderMandoProduccion();
+  if(typeof calcularCompras==='function') try{calcularCompras();}catch(e){}
+}
+
+// ══════════════════════════════════════════════════
+// MARCAR INSUMO COMPRADO — desde Compras en Mando Central: suma stock y registra el gasto
+// ══════════════════════════════════════════════════
+function marcarInsumoComprado(insId,dueño,paquetes,costo){
+  const esLiceo=(dueño===null||dueño===undefined||dueño==='liceo');
+  const ins=esLiceo?S.insumos.find(i=>i.id===insId):(dueño.insumos||[]).find(i=>i.id===insId);
+  if(!ins) return;
+  const cantidadCruda=paquetes*(ins.cantPaquete||0);
+  ins.stock=(ins.stock||0)+cantidadCruda;
+  if(esLiceo){
+    agregarTx('egreso',`Compra — ${ins.nombre}`,costo,'Compra insumo');
+  } else {
+    if(!dueño.nextId) dueño.nextId=1;
+    dueño.libro.push({id:dueño.nextId++,fecha:fechaHoy(),concepto:`Compra — ${ins.nombre}`,tipo:'egreso',monto:costo,origen:'Compra insumo'});
+  }
+  guardarEstado();
+  toast(`${ins.nombre} — stock actualizado ✓`);
+  renderMandoCentral();
+}
+
+function renderMandoCompras(){
+  const cont=document.getElementById('mando-compras');
+  if(!cont) return;
+  const items=[]; // {origen, insumo, dem, stock, falta}
+
+  insumosBajoMinimo('liceo').forEach(r=>items.push({origen:'Liceo',...r}));
+  S.empresas.forEach((emp,idx)=>{
+    if(!emp.usaInsumos) return;
+    insumosBajoMinimo(emp).forEach(r=>items.push({origen:emp.nombre,_idx:idx,...r}));
+  });
+
+  if(!items.length){
+    cont.innerHTML='<p class="text-xs text-center py-3" style="color:var(--muted)">✓ No falta comprar nada esta semana.</p>';
+    return;
+  }
+
+  const itemsConCosto=items.map(it=>{
+    const paqFalta=enPaquetes(it.falta,it.insumo.cantPaquete,true);
+    const fijado=(it.insumo.proveedores||[]).find(p=>p.fijado);
+    const precioPaq=fijado?fijado.precioPaquete:(it.insumo.costoPaquete||0);
+    const costo=paqFalta*precioPaq;
+    return {...it,paqFalta,costo};
+  });
+  const costoTotal=itemsConCosto.reduce((s,it)=>s+it.costo,0);
+
+  // Agrupar por día de compra + lugar (ej: "Lunes — Fruna", "Martes — La Vega")
+  const DIAS_SEMANA=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+  const DIAS_JS=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado']; // Date.getDay(): 0=Domingo
+  const hoyNombre=DIAS_JS[new Date().getDay()];
+  const grupos={}; // clave "dia||lugar" -> {dia,lugar,items:[]}
+  itemsConCosto.forEach(it=>{
+    const dia=it.insumo.diaCompra||'';
+    const lugar=it.insumo.lugarCompra||'';
+    const clave=dia+'||'+lugar;
+    if(!grupos[clave]) grupos[clave]={dia,lugar,items:[]};
+    grupos[clave].items.push(it);
+  });
+  let clavesOrdenadas=Object.keys(grupos).sort((a,b)=>{
+    const A=grupos[a],B=grupos[b];
+    const iA=A.dia?DIAS_SEMANA.indexOf(A.dia):99, iB=B.dia?DIAS_SEMANA.indexOf(B.dia):99;
+    if(iA!==iB) return iA-iB;
+    return (A.lugar||'').localeCompare(B.lugar||'');
+  });
+
+  // Por defecto: solo mostrar lo de HOY + lo que no tiene día asignado (para no perderlo de vista).
+  const verSemanaCompleta=!!S._verComprasSemanaCompleta;
+  const clavesHoy=clavesOrdenadas.filter(c=>grupos[c].dia===hoyNombre||grupos[c].dia==='');
+  const clavesAMostrar=verSemanaCompleta?clavesOrdenadas:clavesHoy;
+  const hayOtrosDias=clavesOrdenadas.length>clavesHoy.length;
+
+  let i=0;
+  const bloquesHTML=clavesAMostrar.map(clave=>{
+    const g=grupos[clave];
+    const tituloDia=g.dia?`🗓️ ${g.dia}`:'📌 Sin día asignado';
+    const tituloLugar=g.lugar?` — 🏪 ${g.lugar}`:' — sin lugar asignado';
+    const subtotal=g.items.reduce((s,it)=>s+it.costo,0);
+    const filas=g.items.map(it=>{
+      const key='compras:'+(i++);
+      const esLiceo=it.origen==='Liceo';
+      window._mandoAcciones[key]=esLiceo
+        ? function(){ showGlobal('empresas');entrarLiceo();showEmpresaTab('emp-planificacion'); }
+        : function(){ showGlobal('empresas');entrarEmpresa(it._idx);showEmpresaTab('emp-productos'); };
+      const dueñoJs=esLiceo?"'liceo'":`S.empresas[${it._idx}]`;
+      const btnComprado=`<button onclick="marcarInsumoComprado(${it.insumo.id},${dueñoJs},${it.paqFalta},${it.costo})" class="btn-primary" style="width:100%;margin-top:6px;font-size:11px">✓ Marcar comprado</button>`;
+      return _cardMando('var(--danger)','🛒',it.origen,
+        it.insumo.nombre+' — comprar '+it.paqFalta+' paq.',
+        [
+          {label:'Costo', val:fmt(it.costo)},
+        ],
+        key,
+        btnComprado
+      );
+    }).join('');
+    return `<div class="mb-3">
+      <div class="flex justify-between items-center mb-2 pb-1" style="border-bottom:1px solid var(--border)">
+        <span class="text-xs font-semibold">${tituloDia}${tituloLugar}</span>
+        <span class="text-xs font-semibold" style="color:var(--warn)">${fmt(subtotal)}</span>
+      </div>
+      ${filas}
+    </div>`;
+  }).join('');
+
+  const costoMostrado=clavesAMostrar.reduce((s,c)=>s+grupos[c].items.reduce((s2,it)=>s2+it.costo,0),0);
+
+  cont.innerHTML=`<div class="text-xs mb-2" style="color:var(--muted)">${itemsConCosto.length} insumo(s) bajo el mínimo semanal${verSemanaCompleta?'':' — mostrando hoy ('+hoyNombre+')'}</div>`
+    + (bloquesHTML||'<p class="text-xs text-center py-3" style="color:var(--muted)">✓ Nada que comprar hoy ('+hoyNombre+').</p>')
+    + (hayOtrosDias?`<button onclick="S._verComprasSemanaCompleta=${!verSemanaCompleta};renderMandoCompras()" class="btn-ghost" style="width:100%;margin-top:6px;font-size:11px">${verSemanaCompleta?'▲ Ver solo hoy':'▼ Ver semana completa'}</button>`:'')
+    + `<div class="flex justify-between items-center pt-2 mt-2" style="border-top:2px solid var(--border)">
+        <span class="text-sm font-semibold">Total ${verSemanaCompleta?'a gastar (semana)':'de hoy'}</span>
+        <span class="text-lg font-bold" style="color:var(--warn)">${fmt(costoMostrado)}</span>
+      </div>`;
+}
+
+// ══════════════════════════════════════════════════
+// FASE 2 — 📦 MATERIA PRIMA: stock completo de TODOS los insumos, falten o no
+// ══════════════════════════════════════════════════
+function renderMandoMateriaPrima(){
+  const cont=document.getElementById('mando-materiaprima');
+  if(!cont) return;
+
+  const grupos=[{origen:'Liceo',dueño:'liceo',insumos:S.insumos}];
+  S.empresas.forEach((emp,idx)=>{
+    if(emp.usaInsumos) grupos.push({origen:emp.nombre,dueño:emp,insumos:emp.insumos||[]});
+  });
+
+  const gruposConDatos=grupos.filter(g=>g.insumos.length>0);
+  if(!gruposConDatos.length){
+    cont.innerHTML='<p class="text-xs text-center py-3" style="color:var(--muted)">Sin insumos cargados todavía.</p>';
+    return;
+  }
+
+  const bloques=gruposConDatos.map(g=>{
+    const dem=calcularDemandaInsumos(g.dueño);
+    const insumosConDemanda=g.insumos.filter(ins=>(dem[ins.id]||0)>0);
+    if(!insumosConDemanda.length) return '';
+    const filas=insumosConDemanda.map(ins=>{
+      const necesario=dem[ins.id]||0;
+      const stock=ins.stock||0;
+      let color='var(--accent2)'; // hay margen, holgado
+      if(stock<necesario) color='var(--danger)'; // bajo mínimo
+      else if(stock<necesario*1.2) color='var(--warn)'; // justo, menos de 20% de margen
+      const paqNecesario=enPaquetes(necesario,ins.cantPaquete,true);
+      return `<tr>
+        <td class="td" data-label="Insumo" style="font-weight:600">${ins.nombre}</td>
+        <td class="td" data-label="Comprar" style="color:${color};font-weight:600">${paqNecesario} paq.</td>
+      </tr>`;
+    }).join('');
+    return `<div class="mb-3">
+      ${gruposConDatos.length>1?`<div class="text-xs font-semibold mb-1" style="color:var(--muted)">${g.origen}</div>`:''}
+      <table class="tbl-mobile-cards" style="width:100%">
+        <thead><tr><th class="th">Insumo</th><th class="th">Comprar</th></tr></thead>
+        <tbody>${filas}</tbody>
+      </table>
+    </div>`;
+  }).filter(html=>html!=='');
+
+  cont.innerHTML=bloques.length
+    ? bloques.join('')
+    : '<p class="text-xs text-center py-3" style="color:var(--muted)">Sin demanda esta semana — cargá metas en Productos para ver qué necesitás.</p>';
+}
+
+// ══════════════════════════════════════════════════
+// FASE 3 — 💰 DINERO DISPONIBLE: total consolidado + desglose por origen
+// ══════════════════════════════════════════════════
+function renderMandoDinero(){
+  const cont=document.getElementById('mando-dinero');
+  if(!cont) return;
+
+  const cajaLiceo=(S.libroContable||[]).reduce((s,tx)=>s+(tx.tipo==='ingreso'?tx.monto:-tx.monto),0);
+  const cajasEmpresas=S.empresas.map(emp=>({
+    nombre:emp.nombre,
+    caja:(emp.libro||[]).reduce((s,tx)=>s+(tx.tipo==='ingreso'?tx.monto:-tx.monto),0)
+  }));
+  const cajaTotal=cajaLiceo+cajasEmpresas.reduce((s,e)=>s+e.caja,0);
+
+  const filaDesglose=(nombre,monto)=>`<div class="flex items-center justify-between py-1" style="border-bottom:1px solid var(--border)">
+    <span class="text-xs">${nombre}</span>
+    <span class="text-xs font-semibold" style="color:${monto>=0?'var(--accent2)':'var(--danger)'}">${fmt(monto)}</span>
+  </div>`;
+
+  cont.innerHTML=`
+    <div class="text-center mb-3">
+      <div class="text-2xl font-bold" style="color:${cajaTotal>=0?'var(--accent2)':'var(--danger)'}">${fmt(cajaTotal)}</div>
+      <div class="text-xs" style="color:var(--muted)">Total consolidado — Liceo + todas las Empresas</div>
+    </div>
+    <div>
+      ${filaDesglose('Liceo',cajaLiceo)}
+      ${cajasEmpresas.map(e=>filaDesglose(e.nombre,e.caja)).join('')}
+    </div>
+    <p class="text-xs mt-2" style="color:var(--muted)">Ingresos − egresos del libro contable. No incluye deudas pendientes de cobrar ni comisiones sin pagar.</p>
+  `;
+}
+
+// ══════════════════════════════════════════════════
+// FASE 4 — 🔔 ALERTAS: resto de misiones (cobros, metas, pérdidas, deudas)
+// Excluye tipo 'stock' a propósito — eso ya se muestra en Compras y Materia Prima, mostrarlo acá también sería duplicado.
+// ══════════════════════════════════════════════════
+function renderMandoAlertasResto(){
+  const cont=document.getElementById('mando-alertas');
+  if(!cont) return;
+
+  const alertas=construirAlertas().filter(a=>a.tipo!=='stock');
+  if(!alertas.length){
+    cont.innerHTML='<p class="text-xs text-center py-3" style="color:var(--muted)">✓ Sin alertas pendientes.</p>';
+    return;
+  }
+
+  const peso={'var(--danger)':0,'var(--warn)':1,'var(--info)':2};
+  const ordenadas=alertas.slice().sort((a,b)=>(peso[a.color]??3)-(peso[b.color]??3));
+
+  cont.innerHTML=ordenadas.map((a,i)=>{
+    const t=ALERT_TIPOS[a.tipo]||{emoji:'⚠️',label:a.tipo};
+    const key='alertas:'+i;
+    window._mandoAcciones[key]=a.accion;
+    return _cardMando(a.color,t.emoji,t.label+' — '+a.empresa,a.resumen,a.desglose,a.accion?key:null);
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════
+// PESTAÑA INPUT — atajos a todos los lugares de escritura manual, agrupados en una sola vista para móvil
+// ══════════════════════════════════════════════════
+function renderInput(){
+  const cont=document.getElementById('input-lista');
+  if(!cont) return;
+
+  const items=[]; // {emoji, label, sub, accion}
+
+  // Bodega — Liceo
+  items.push({emoji:'📦',label:'Bodega',sub:'Liceo — stock de materia prima',
+    accion:function(){ showGlobal('empresas');entrarLiceo();showEmpresaTab('emp-bodega'); }});
+  // Ventas/Empleados — Liceo
+  items.push({emoji:'👥',label:'Ventas',sub:'Liceo — entregados y almuerzo por vendedor',
+    accion:function(){ showGlobal('empresas');entrarLiceo();showEmpresaTab('emp-empleados-liceo'); }});
+  // Recetas — Liceo
+  items.push({emoji:'📋',label:'Recetas',sub:'Liceo — receta de salsas y preparaciones',
+    accion:function(){ showGlobal('empresas');entrarLiceo();showEmpresaTab('emp-recetas'); }});
+
+  // Por cada Empresa: Productos + Ventas, y Bodega si usaInsumos
+  S.empresas.forEach((emp,idx)=>{
+    const _idx=idx;
+    if(!emp.soloLibro){
+      items.push({emoji:'📦',label:'Productos',sub:emp.nombre+' — precio, comisión, receta',
+        accion:function(){ showGlobal('empresas');entrarEmpresa(_idx);showEmpresaTab('emp-productos'); }});
+      items.push({emoji:'👥',label:'Ventas',sub:emp.nombre+' — entregados y almuerzo por vendedor',
+        accion:function(){ showGlobal('empresas');entrarEmpresa(_idx);showEmpresaTab('emp-empleados'); }});
+    }
+  });
+
+  // Personal
+  items.push({emoji:'💳',label:'Deudas',sub:'Personal — cargar deuda nueva',
+    accion:function(){ showGlobal('home');showPersTab('pers-tab-deudas'); }});
+  items.push({emoji:'📌',label:'Gastos fijos',sub:'Personal — gastos fijos mensuales',
+    accion:function(){ showGlobal('home');showPersTab('pers-tab-fijos'); }});
+  items.push({emoji:'📥',label:'Ingreso',sub:'Personal — registrar ingreso directo',
+    accion:function(){ agregarIngresoPersonal(); }});
+  items.push({emoji:'📤',label:'Egreso',sub:'Personal — registrar egreso directo',
+    accion:function(){ agregarEgresoPersonal(); }});
+
+  // Ingreso/Egreso por cada Empresa (entra primero a la empresa, luego abre el modal)
+  S.empresas.forEach((emp,idx)=>{
+    const _idx=idx;
+    items.push({emoji:'📥',label:'Ingreso',sub:emp.nombre+' — registrar ingreso directo',
+      accion:function(){ showGlobal('empresas'); entrarEmpresa(_idx); empIngreso(); }});
+    items.push({emoji:'📤',label:'Egreso',sub:emp.nombre+' — registrar egreso directo',
+      accion:function(){ showGlobal('empresas'); entrarEmpresa(_idx); empEgreso(); }});
+  });
+
+  window._inputAcciones={};
+  cont.innerHTML=items.map((it,i)=>{
+    const key='input:'+i;
+    window._inputAcciones[key]=it.accion;
+    return `<div class="card2 p-3" style="cursor:pointer" onclick="_runInputAccion('${key}')">
+      <div class="flex items-center gap-3">
+        <span style="font-size:18px">${it.emoji}</span>
+        <div class="flex-1">
+          <div class="text-sm font-semibold">${it.label}</div>
+          <div class="text-xs" style="color:var(--muted)">${it.sub}</div>
+        </div>
+        <span style="color:var(--muted)">→</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+function _runInputAccion(key){ const fn=window._inputAcciones&&window._inputAcciones[key]; if(fn) fn(); }
+
 function showGlobal(panel){
   document.getElementById('global-home').style.display = panel==='home'?'block':'none';
   document.getElementById('global-empresas').style.display = panel==='empresas'?'block':'none';
+  document.getElementById('global-input').style.display = panel==='input'?'block':'none';
+  document.getElementById('global-mando').style.display = panel==='mando'?'block':'none';
   document.getElementById('nav-home').classList.toggle('active', panel==='home');
   document.getElementById('nav-empresas').classList.toggle('active', panel==='empresas');
+  document.getElementById('nav-input').classList.toggle('active', panel==='input');
+  document.getElementById('nav-mando').classList.toggle('active', panel==='mando');
   if(panel==='home'){ renderPersonal(); renderAlertas(); renderEmpresasHomeResumen(); }
   if(panel==='empresas'){ renderEmpresasGrid(); }
+  if(panel==='input'){ renderInput(); }
+  if(panel==='mando'){ renderMandoCentral(); }
+  const btnFlot=document.getElementById('btn-input-flotante');
+  if(btnFlot) btnFlot.style.display=(panel==='input')?'none':'flex';
 }
 
 // Legacy showModule — redirige a showGlobal o showEmpresaTab
 function showModule(name){
   const liceoTabs={
-    'bodega':'emp-bodega','salsas':'emp-salsas','planificacion':'emp-planificacion',
+    'bodega':'emp-bodega','salsas':'emp-recetas','planificacion':'emp-planificacion',
     'empleados':'emp-empleados-liceo','finanzas':'emp-finanzas-liceo','home':'emp-dashboard'
   };
   if(name==='personal'){ showGlobal('home'); return; }
@@ -1008,36 +1603,42 @@ const ALERT_TIPOS = {
   deuda:   {emoji:'💳', label:'Deuda por vencer',     color:'var(--warn)'},
 };
 
-function renderAlertas(){
-  const header = document.getElementById('panel-alertas-header');
-  const el = document.getElementById('panel-alertas');
-  const badge = document.getElementById('alertas-badge');
-  if(!el) return;
-
-  // Guardar acciones en array global para no serializar funciones
-  window._alertaAcciones = [];
-
+function construirAlertas(){
   const alertas = [];
 
-  // ── Liceo: Stock ──
-  S.insumos.forEach(ins=>{
-    const dem=S.productos.reduce((acc,p)=>{
-      const mf=1+(+(p.merma||0)/100);
-      const r=Math.max(0,(p.meta||0)-(p.stockTerminado||0))*mf;
-      return acc+r*(+p.receta[ins.id]||0);
-    },0);
-    if(dem>0&&(ins.stock||0)<dem)
+  // ── Liceo: Stock (usa la misma fuente que Compras — insumosBajoMinimo/calcularDemandaInsumos) ──
+  insumosBajoMinimo('liceo').forEach(({insumo:ins,dem,stock,falta})=>{
+    alertas.push({
+      tipo:'stock', area:'liceo', empresa:'Liceo', color:'var(--danger)',
+      resumen:ins.nombre+' — '+stock+' / '+Math.ceil(dem)+' necesarios',
+      desglose:[
+        {label:'Insumo',    val:ins.nombre},
+        {label:'Stock',     val:stock+(ins.unidad==='Gramos'?'g':' u')},
+        {label:'Necesario', val:Math.ceil(dem)+(ins.unidad==='Gramos'?'g':' u')},
+        {label:'Faltante',  val:Math.ceil(falta)+(ins.unidad==='Gramos'?'g':' u')},
+      ],
+      accion:function(){ showGlobal('empresas');entrarLiceo();showEmpresaTab('emp-planificacion'); }
+    });
+  });
+
+  // ── Empresas con bodega propia (usaInsumos): mismo chequeo de stock ──
+  S.empresas.forEach((emp,idx)=>{
+    if(!emp.usaInsumos) return;
+    insumosBajoMinimo(emp).forEach(({insumo:ins,dem,stock,falta})=>{
+      const _idx=idx;
       alertas.push({
-        tipo:'stock', area:'liceo', empresa:'Liceo', color:'var(--danger)',
-        resumen:ins.nombre+' — '+ins.stock+' / '+Math.ceil(dem)+' necesarios',
+        tipo:'stock', area:'empresas', empresa:emp.nombre, color:'var(--danger)',
+        resumen:emp.nombre+' — '+ins.nombre+' — '+stock+' / '+Math.ceil(dem)+' necesarios',
         desglose:[
+          {label:'Empresa',   val:emp.nombre},
           {label:'Insumo',    val:ins.nombre},
-          {label:'Stock',     val:(ins.stock||0)+(ins.unidad==='Gramos'?'g':' u')},
+          {label:'Stock',     val:stock+(ins.unidad==='Gramos'?'g':' u')},
           {label:'Necesario', val:Math.ceil(dem)+(ins.unidad==='Gramos'?'g':' u')},
-          {label:'Faltante',  val:Math.max(0,Math.ceil(dem)-(ins.stock||0))+(ins.unidad==='Gramos'?'g':' u')},
+          {label:'Faltante',  val:Math.ceil(falta)+(ins.unidad==='Gramos'?'g':' u')},
         ],
-        accion:function(){ showGlobal('empresas');entrarLiceo();showEmpresaTab('emp-planificacion'); }
+        accion:function(){ showGlobal('empresas');entrarEmpresa(_idx);showEmpresaTab('emp-productos'); }
       });
+    });
   });
 
   // ── Liceo: Cobro pendiente ──
@@ -1146,6 +1747,20 @@ function renderAlertas(){
     });
   }
 
+  return alertas;
+}
+
+function renderAlertas(){
+  const header = document.getElementById('panel-alertas-header');
+  const el = document.getElementById('panel-alertas');
+  const badge = document.getElementById('alertas-badge');
+  if(!el) return;
+
+  // Guardar acciones en array global para no serializar funciones
+  window._alertaAcciones = [];
+
+  const alertas = construirAlertas();
+
   // Header badge
   if(header){
     header.style.display = alertas.length ? 'flex' : 'none';
@@ -1238,9 +1853,6 @@ function toggleAlertaItem(idx){
 }
 
 // ── Entrar a Liceo ──
-function irAVentasDirecto(){
-  showGlobal('empresas');entrarLiceo();showEmpresaTab('emp-empleados-liceo');
-}
 function entrarLiceo(){
   S.empresaActiva=null;
   document.getElementById('header-global').style.display='none';
@@ -1253,7 +1865,7 @@ function entrarLiceo(){
   document.getElementById('nav-empresa').innerHTML=`
     <button onclick="showEmpresaTab('emp-dashboard')" class="nav-btn active px-3 py-1.5 rounded-md text-xs nav-emp" id="nav-emp-dashboard">📊 Dashboard</button>
     <button onclick="showEmpresaTab('emp-bodega')" class="nav-btn px-3 py-1.5 rounded-md text-xs nav-emp" id="nav-emp-bodega">📦 Bodega</button>
-    <button onclick="showEmpresaTab('emp-salsas')" class="nav-btn px-3 py-1.5 rounded-md text-xs nav-emp" id="nav-emp-salsas">🥣 Salsas</button>
+    <button onclick="showEmpresaTab('emp-recetas')" class="nav-btn px-3 py-1.5 rounded-md text-xs nav-emp" id="nav-emp-recetas">📋 Recetas</button>
     <button onclick="showEmpresaTab('emp-planificacion')" class="nav-btn px-3 py-1.5 rounded-md text-xs nav-emp" id="nav-emp-planificacion">🧮 Compras</button>
     <button onclick="showEmpresaTab('emp-empleados-liceo')" class="nav-btn px-3 py-1.5 rounded-md text-xs nav-emp" id="nav-emp-empleados-liceo">👥 Ventas</button>
     <button onclick="showEmpresaTab('emp-finanzas-liceo')" class="nav-btn px-3 py-1.5 rounded-md text-xs nav-emp" id="nav-emp-finanzas-liceo">💰 Finanzas</button>`;
@@ -1275,23 +1887,17 @@ function setInvMode(mode){
 // BODEGA
 // ══════════════════════════════════════════════════
 function renderBodega(){
-  // Calcular demanda semanal por insumo para alertas
-  const demBodega={};
-  S.productos.forEach(prod=>{
-    const mermaFactor=1+(+(prod.merma||0)/100);
-    const real=Math.max(0,(prod.meta||0)-(prod.stockTerminado||0))*mermaFactor;
-    for(const[id,cant] of Object.entries(prod.receta)){
-      demBodega[id]=(demBodega[id]||0)+real*cant;
-    }
-    (prod.salsas||[]).forEach(sv=>{
-      const salsa=S.salsas.find(s=>s.id===sv.salsaId);
-      if(!salsa) return;
-      const totRec=salsa.ingredientes.reduce((s,i)=>s+i.gramos,0)||1;
-      salsa.ingredientes.forEach(ing=>{
-        demBodega[ing.insId]=(demBodega[ing.insId]||0)+real*(ing.gramos/totRec)*(sv.gramos||0);
-      });
-    });
-  });
+  // Calcular demanda semanal por insumo para alertas — misma fuente que Compras/Mando Central, no una copia aparte.
+  const demBodega=calcularDemandaInsumos('liceo');
+
+  // Lugares de compra ya usados (Liceo + empresas) para autocompletar sin typos
+  const lugaresConocidos=[...new Set([
+    ...S.insumos.map(i=>i.lugarCompra),
+    ...S.empresas.flatMap(e=>(e.insumos||[]).map(i=>i.lugarCompra))
+  ].filter(Boolean))];
+  const dlLugares=document.getElementById('dl-lugares-compra');
+  if(dlLugares) dlLugares.innerHTML=lugaresConocidos.map(l=>`<option value="${l}">`).join('');
+  const DIAS_SEMANA=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
 
   // Insumos — agrupados por categoría (base > relleno > revestimiento > sandwich > empaque),
   // perecibles primero dentro de cada grupo
@@ -1299,10 +1905,11 @@ function renderBodega(){
     base:{label:'🍪 Base',orden:1},
     relleno:{label:'🍯 Relleno',orden:2},
     revestimiento:{label:'🍫 Revestimiento',orden:3},
-    sandwich:{label:'🥪 Sandwich',orden:4},
-    bebida:{label:'🥤 Bebida',orden:5},
-    empaque:{label:'📦 Empaque',orden:6},
-    otro:{label:'❓ Sin categoría',orden:7},
+    especias:{label:'🧂 Especias',orden:4},
+    sandwich:{label:'🥪 Sandwich',orden:5},
+    bebida:{label:'🥤 Bebida',orden:6},
+    empaque:{label:'📦 Empaque',orden:7},
+    otro:{label:'❓ Sin categoría',orden:8},
   };
   const gruposIns={};
   S.insumos.forEach(ins=>{
@@ -1314,7 +1921,7 @@ function renderBodega(){
   let filasInsumos='';
   catsOrdenadas.forEach(cat=>{
     const grupo=gruposIns[cat].slice().sort((a,b)=>(b.perecible?1:0)-(a.perecible?1:0));
-    filasInsumos+=`<tr class="tbl-group-row" style="background:var(--surface3)"><td colspan="8" class="td text-xs font-semibold" style="padding:5px 8px">${CATEGORIAS_INS[cat].label}</td></tr>`;
+    filasInsumos+=`<tr class="tbl-group-row" style="background:var(--surface3)"><td colspan="11" class="td text-xs font-semibold" style="padding:5px 8px">${CATEGORIAS_INS[cat].label}</td></tr>`;
     grupo.forEach(ins=>{
     const stockReal=ins.stock||0;
     const stockPaq=ins.cantPaquete>0?stockReal/ins.cantPaquete:0;
@@ -1352,13 +1959,23 @@ function renderBodega(){
         <input type="number" value="${stockDisplay}" min="0" step="${S.invMode==='paq'?'0.01':'1'}" style="width:75px;text-align:right;${alerta?'border-color:var(--danger)':''}" onchange="updateStock(${ins.id},this.value)">
         ${demNec>0?`<div style="margin-top:3px;height:3px;background:var(--surface3);border-radius:2px;overflow:hidden"><div style="width:${pctStock}%;height:100%;background:${alertaColor};transition:width .3s"></div></div>`:''}
       </td>
+      <td class="td" data-label="Lugar">
+        <input type="text" list="dl-lugares-compra" value="${ins.lugarCompra||''}" placeholder="Ej: Fruna" style="width:90px" onchange="S.insumos.find(i=>i.id==${ins.id}).lugarCompra=this.value.trim();guardarEstado();renderBodega()">
+      </td>
+      <td class="td" data-label="Día">
+        <select style="width:95px;font-size:11px" onchange="S.insumos.find(i=>i.id==${ins.id}).diaCompra=this.value;guardarEstado()">
+          <option value="" ${!ins.diaCompra?'selected':''}>Sin asignar</option>
+          ${DIAS_SEMANA.map(d=>`<option value="${d}" ${ins.diaCompra===d?'selected':''}>${d}</option>`).join('')}
+        </select>
+      </td>
+      <td class="td" data-label=""><button onclick="modalProveedoresInsumo(${ins.id},'liceo')" class="btn-ghost" style="padding:3px 7px;font-size:10px" title="Proveedores">🚚${(ins.proveedores||[]).length?' '+ins.proveedores.length:''}</button></td>
       <td class="td" data-label=""><button onclick="confirmarEliminar('insumo',${ins.id})" class="btn-danger" style="padding:3px 7px;font-size:10px">✕</button></td>
     </tr>`;
     });
   });
   document.getElementById('tabla-insumos').innerHTML=filasInsumos;
 
-  // Productos con selector de salsas
+  // Productos con selector de recetas
   document.getElementById('lista-productos').innerHTML=S.productos.map(prod=>{
     const cf=costoFab(prod);
     const mermaSug=mermaHistoricaSugerida(prod.id);
@@ -1372,22 +1989,22 @@ function renderBodega(){
       </div>`;
     }).join('');
 
-    // Salsas vinculadas
-    const salsasVinHtml=(prod.salsas||[]).map((sv,idx)=>{
-      const salsa=S.salsas.find(s=>s.id===sv.salsaId);
-      if(!salsa) return '';
-      const costoSalsaUnit=costoSalsa(salsa)*(sv.gramos||0)/100;
+    // Recetas vinculadas
+    const recetasVinHtml=(prod.recetas||[]).map((sv,idx)=>{
+      const receta=S.recetas.find(r=>r.id===sv.recetaId);
+      if(!receta) return '';
+      const costoRecetaUnit=costoRecetaPorcion(receta,sv.gramos||0);
       return `<div class="flex items-center gap-2 py-1" style="border-bottom:1px solid var(--border)">
-        <span class="text-xs flex-1 font-medium" style="color:var(--accent)">🥣 ${salsa.nombre}</span>
+        <span class="text-xs flex-1 font-medium" style="color:var(--accent)">📋 ${receta.nombre}</span>
         <input type="number" value="${sv.gramos||0}" min="0" style="width:60px;text-align:right;font-size:12px" placeholder="g/u"
-          onchange="S.productos.find(p=>p.id==${prod.id}).salsas[${idx}].gramos=+this.value;renderBodega()">
+          onchange="S.productos.find(p=>p.id==${prod.id}).recetas[${idx}].gramos=+this.value;renderBodega()">
         <span class="text-xs" style="color:var(--muted);width:24px">g/u</span>
-        <span class="tag-green" style="min-width:52px;text-align:right">${fmt(costoSalsaUnit)}</span>
-        <button onclick="S.productos.find(p=>p.id==${prod.id}).salsas.splice(${idx},1);renderBodega()" class="btn-danger" style="padding:2px 6px;font-size:10px">✕</button>
+        <span class="tag-green" style="min-width:52px;text-align:right">${fmt(costoRecetaUnit)}</span>
+        <button onclick="S.productos.find(p=>p.id==${prod.id}).recetas.splice(${idx},1);renderBodega()" class="btn-danger" style="padding:2px 6px;font-size:10px">✕</button>
       </div>`;
     }).join('');
 
-    const salsaSelectOpts=S.salsas.map(s=>`<option value="${s.id}">${s.nombre}</option>`).join('');
+    const recetaSelectOpts=S.recetas.map(r=>`<option value="${r.id}">${r.nombre}</option>`).join('');
 
     return `<div class="card2 p-3">
       <div class="flex flex-wrap items-start gap-3 justify-between">
@@ -1399,6 +2016,7 @@ function renderBodega(){
           <div class="flex items-center gap-1"><span class="text-xs" style="color:var(--muted)">Precio</span><input type="number" value="${prod.precioVenta}" min="0" style="width:75px;text-align:right" onchange="S.productos.find(p=>p.id==${prod.id}).precioVenta=+this.value;renderBodega()"></div>
           <div class="flex items-center gap-1"><span class="text-xs" style="color:var(--muted)">Comisión</span><input type="number" value="${prod.comision}" min="0" style="width:65px;text-align:right" onchange="S.productos.find(p=>p.id==${prod.id}).comision=+this.value;renderBodega()"></div>
           <div class="flex items-center gap-1"><span class="text-xs" style="color:var(--muted)">Merma %</span><input type="number" value="${prod.merma||0}" min="0" max="100" style="width:52px;text-align:right" title="% de merma estimada sobre unidades producidas" onchange="S.productos.find(p=>p.id==${prod.id}).merma=+this.value;renderBodega()"></div>
+          <button onclick="ventaRapida(${prod.id},'liceo')" class="btn-ghost" style="padding:3px 7px;font-size:10px" title="Venta directa sin comisión">💵</button>
           <button onclick="eliminarProducto(${prod.id})" class="btn-danger" style="padding:3px 7px;font-size:10px">✕</button>
         </div>
       </div>
@@ -1412,33 +2030,33 @@ function renderBodega(){
         ${mermaSug&&mermaSug!==(prod.merma||0)?`<button onclick="S.productos.find(p=>p.id==${prod.id}).merma=${mermaSug};renderBodega()" class="tag-yellow" style="cursor:pointer;border:none" title="Basado en historial: vendiste en promedio menos de tu meta">↗ Sugerir merma ${mermaSug}%</button>`:''}
       </div>
       <details class="mt-2">
-        <summary class="text-xs cursor-pointer" style="color:var(--muted)">▸ Receta & Salsas</summary>
+        <summary class="text-xs cursor-pointer" style="color:var(--muted)">▸ Receta</summary>
         <div class="mt-2 pl-1">
           <div class="text-xs font-medium mb-1" style="color:var(--muted)">INGREDIENTES</div>
           ${recHtml}
-          <div class="text-xs font-medium mt-3 mb-1" style="color:var(--accent)">SALSAS VINCULADAS</div>
-          ${salsasVinHtml||'<p class="text-xs" style="color:var(--muted)">Sin salsas vinculadas</p>'}
-          ${S.salsas.length?`<div class="flex gap-2 mt-2">
-            <select id="sel-salsa-${prod.id}" style="flex:1;font-size:12px">${salsaSelectOpts}</select>
-            <button onclick="vincularSalsaAProducto(${prod.id})" class="btn-primary" style="padding:4px 10px;font-size:11px">+ Vincular salsa</button>
-          </div>`:`<p class="text-xs mt-1" style="color:var(--muted)">Crea salsas en 🥣 Salsas primero</p>`}
+          <div class="text-xs font-medium mt-3 mb-1" style="color:var(--accent)">RECETAS VINCULADAS</div>
+          ${recetasVinHtml||'<p class="text-xs" style="color:var(--muted)">Sin recetas vinculadas</p>'}
+          ${S.recetas.length?`<div class="flex gap-2 mt-2">
+            <select id="sel-receta-${prod.id}" style="flex:1;font-size:12px">${recetaSelectOpts}</select>
+            <button onclick="vincularRecetaAProducto(${prod.id})" class="btn-primary" style="padding:4px 10px;font-size:11px">+ Vincular receta</button>
+          </div>`:`<p class="text-xs mt-1" style="color:var(--muted)">Crea recetas en 📋 Recetas primero</p>`}
         </div>
       </details>
     </div>`;
   }).join('');
 }
 
-function vincularSalsaAProducto(prodId){
-  const sel=document.getElementById('sel-salsa-'+prodId);
+function vincularRecetaAProducto(prodId){
+  const sel=document.getElementById('sel-receta-'+prodId);
   if(!sel) return;
-  const salsaId=+sel.value;
+  const recetaId=+sel.value;
   const prod=S.productos.find(p=>p.id===prodId);
   if(!prod) return;
-  if((prod.salsas||[]).find(sv=>sv.salsaId===salsaId)){toast('Salsa ya vinculada');return;}
-  if(!prod.salsas) prod.salsas=[];
-  prod.salsas.push({salsaId,gramos:0});
+  if((prod.recetas||[]).find(sv=>sv.recetaId===recetaId)){toast('Receta ya vinculada');return;}
+  if(!prod.recetas) prod.recetas=[];
+  prod.recetas.push({recetaId,gramos:0});
   renderBodega();
-  toast('Salsa vinculada ✓ — escribe los gramos/unidades por porción');
+  toast('Receta vinculada ✓ — escribe los gramos/unidades por porción');
 }
 
 function updateStock(insId,val){
@@ -1450,19 +2068,20 @@ function updateStock(insId,val){
 // ══════════════════════════════════════════════════
 // SALSAS
 // ══════════════════════════════════════════════════
-function crearSalsa(){
-  const id=S.nextSalsaId++;
-  S.salsas.push({id,nombre:'Nueva salsa',ingredientes:[]});
-  renderSalsas();
+function crearReceta(){
+  const id=S.nextRecetaId++;
+  S.recetas.push({id,nombre:'Nueva receta',ingredientes:[],merma:0});
+  renderRecetas();
 }
-function renderSalsas(){
-  const empty=document.getElementById('salsas-empty');
-  const lista=document.getElementById('lista-salsas');
-  empty.style.display=S.salsas.length?'none':'block';
-  if(!S.salsaEscala) S.salsaEscala={};
-  lista.innerHTML=S.salsas.map(salsa=>{
-    const escala=S.salsaEscala[salsa.id]||1;
-    const ingHtml=salsa.ingredientes.map((ing,idx)=>{
+function renderRecetas(){
+  const empty=document.getElementById('recetas-empty');
+  const lista=document.getElementById('lista-recetas');
+  empty.style.display=S.recetas.length?'none':'block';
+  if(!S.recetaEscala) S.recetaEscala={};
+  const demRecetas=calcularDemandaRecetas(); // cuánto de cada receta hace falta esta semana según meta de productos
+  lista.innerHTML=S.recetas.map(receta=>{
+    const escala=S.recetaEscala[receta.id]||1;
+    const ingHtml=receta.ingredientes.map((ing,idx)=>{
       const ins=S.insumos.find(i=>i.id===ing.insId)||{nombre:'?',unidad:'?',costoPaquete:0,cantPaquete:1};
       const cantEscalada=ing.gramos*escala;
       const unidadLabel=ins.unidad==='Gramos'?'g':'u';
@@ -1471,57 +2090,187 @@ function renderSalsas(){
       const paqNecesarios=ins.cantPaquete>0?Math.ceil(cantEscalada/ins.cantPaquete):0;
       return `<div class="flex items-center gap-2 py-1" style="border-bottom:1px solid var(--border)">
         <span class="text-xs flex-1">${ins.nombre}</span>
-        <input type="number" value="${ing.gramos}" min="0" style="width:55px;text-align:right;font-size:12px" title="Por porción" onchange="S.salsas.find(s=>s.id==${salsa.id}).ingredientes[${idx}].gramos=+this.value;renderSalsas()">
+        <input type="number" value="${ing.gramos}" min="0" style="width:55px;text-align:right;font-size:12px" title="Por porción" onchange="S.recetas.find(r=>r.id==${receta.id}).ingredientes[${idx}].gramos=+this.value;renderRecetas()">
         <span class="text-xs" style="color:var(--muted)">${unidadLabel}/p</span>
         ${escala>1?`<span class="text-xs font-semibold" style="color:var(--accent2);min-width:55px;text-align:right" title="Para ${escala} porciones">${cantEscalada%1===0?cantEscalada:cantEscalada.toFixed(1)}${unidadLabel}</span>`:'<span style="min-width:55px"></span>'}
         ${escala>1?`<span class="text-xs" style="color:var(--muted);min-width:38px" title="Paquetes a comprar">${paqNecesarios}paq</span>`:'<span style="min-width:38px"></span>'}
         <span class="tag-green" style="min-width:50px;text-align:right">${fmt(costoEscalado)}</span>
-        <button onclick="S.salsas.find(s=>s.id==${salsa.id}).ingredientes.splice(${idx},1);renderSalsas()" class="btn-danger" style="padding:2px 6px;font-size:10px">✕</button>
+        <button onclick="S.recetas.find(r=>r.id==${receta.id}).ingredientes.splice(${idx},1);renderRecetas()" class="btn-danger" style="padding:2px 6px;font-size:10px">✕</button>
       </div>`;
     }).join('');
-    const cTotal=salsa.ingredientes.reduce((a,i)=>{const ins=S.insumos.find(x=>x.id===i.insId);return a+(ins?cu(ins)*i.gramos*escala:0);},0);
+    const cTotal=receta.ingredientes.reduce((a,i)=>{const ins=S.insumos.find(x=>x.id===i.insId);return a+(ins?cu(ins)*i.gramos*escala:0);},0);
     const opts=S.insumos.map(i=>`<option value="${i.id}">${i.nombre}</option>`).join('');
     const headerEscala=escala>1
       ?`<span class="text-xs" style="color:var(--muted)">Por porción</span><span class="text-xs font-semibold" style="color:var(--accent2)">Para ${escala} porciones</span><span class="text-xs" style="color:var(--muted)">Paquetes</span><span class="text-xs" style="color:var(--muted)">Costo</span>`
       :`<span class="text-xs" style="color:var(--muted)">Cantidad/porción</span><span style="min-width:55px"></span><span style="min-width:38px"></span><span class="text-xs" style="color:var(--muted)">Costo</span>`;
+    // Cuánto tengo vs. cuánto necesito de esta receta ya preparada (ej: salsa hecha en bodega)
+    const dem=demRecetas[receta.id];
+    const necesario=dem?dem.grTotales:0;
+    const tengo=receta.stockActual||0;
+    const falta=Math.max(0,necesario-tengo);
+    const bloqueStock=`<div class="flex items-center gap-2 mb-2 flex-wrap" style="background:var(--surface3);border-radius:8px;padding:8px">
+        <span class="text-xs" style="color:var(--muted)">🧪 Necesito esta semana</span>
+        <span class="text-xs font-semibold" style="color:var(--accent)">${necesario.toFixed(1)}g</span>
+        <span class="text-xs" style="color:var(--muted);margin-left:8px">Tengo hecho</span>
+        <input type="number" value="${tengo}" min="0" style="width:70px;text-align:right;font-size:13px;font-weight:600" onchange="S.recetas.find(r=>r.id==${receta.id}).stockActual=Math.max(0,+this.value||0);renderRecetas()">
+        <span class="text-xs" style="color:var(--muted)">g</span>
+        <span class="text-xs font-bold" style="margin-left:auto;color:${falta>0?'var(--warn)':'var(--accent2)'}">${necesario<=0?'Sin demanda pendiente':(falta>0?'Falta hacer: '+falta.toFixed(1)+'g':'✓ Te alcanza')}</span>
+      </div>`;
     return `<div class="card2 p-4">
       <div class="flex items-center gap-3 mb-3 flex-wrap">
-        <input type="text" value="${salsa.nombre}" style="font-weight:600;font-size:13px;background:transparent;border:none;color:var(--text);flex:1" onchange="S.salsas.find(s=>s.id==${salsa.id}).nombre=this.value">
+        <input type="text" value="${receta.nombre}" style="font-weight:600;font-size:13px;background:transparent;border:none;color:var(--text);flex:1" onchange="S.recetas.find(r=>r.id==${receta.id}).nombre=this.value">
         <span class="tag-green">Costo ${escala>1?`${escala}p`:' porción'}: ${fmt(cTotal)}</span>
-        <button onclick="S.salsas=S.salsas.filter(s=>s.id!==${salsa.id});renderSalsas();renderBodega()" class="btn-danger" style="padding:3px 7px;font-size:11px">✕</button>
+        <button onclick="S.recetas=S.recetas.filter(r=>r.id!==${receta.id});renderRecetas();renderBodega()" class="btn-danger" style="padding:3px 7px;font-size:11px">✕</button>
       </div>
-      <div class="flex items-center gap-2 mb-2" style="background:var(--surface3);border-radius:8px;padding:8px">
+      ${bloqueStock}
+      <div class="flex items-center gap-2 mb-2 flex-wrap" style="background:var(--surface3);border-radius:8px;padding:8px">
         <span class="text-xs" style="color:var(--muted)">🧮 Calcular para</span>
-        <input type="number" value="${escala}" min="1" style="width:60px;text-align:center;font-size:13px;font-weight:600" onchange="if(!S.salsaEscala)S.salsaEscala={};S.salsaEscala[${salsa.id}]=Math.max(1,+this.value||1);renderSalsas()">
+        <input type="number" value="${escala}" min="1" style="width:60px;text-align:center;font-size:13px;font-weight:600" onchange="if(!S.recetaEscala)S.recetaEscala={};S.recetaEscala[${receta.id}]=Math.max(1,+this.value||1);renderRecetas()">
         <span class="text-xs" style="color:var(--muted)">porciones</span>
+        <span class="text-xs" style="color:var(--muted);margin-left:8px">🔥 Merma</span>
+        <input type="number" value="${receta.merma||0}" min="0" max="100" style="width:50px;text-align:center;font-size:13px;font-weight:600" title="% extra de insumo necesario por pérdida al cocinar" onchange="S.recetas.find(r=>r.id==${receta.id}).merma=Math.max(0,+this.value||0);renderRecetas()">
+        <span class="text-xs" style="color:var(--muted)">%</span>
         ${escala>1?`<span class="text-xs" style="color:var(--accent);margin-left:auto">Costo total: <strong>${fmt(cTotal)}</strong></span>`:''}
       </div>
-      ${salsa.ingredientes.length?`<div class="flex gap-2 mb-1 text-xs" style="padding:0 2px;color:var(--muted)">
+      ${receta.ingredientes.length?`<div class="flex gap-2 mb-1 text-xs" style="padding:0 2px;color:var(--muted)">
         <span style="flex:1">Insumo</span>${headerEscala}
       </div>`:''}
       <div class="mb-3">${ingHtml||'<p class="text-xs" style="color:var(--muted)">Sin ingredientes</p>'}</div>
       <div class="flex gap-2">
-        <select id="sel-ins-${salsa.id}" style="flex:1">${opts}</select>
-        <button onclick="vincularIngredienteSalsa(${salsa.id})" class="btn-primary" style="font-size:11px;padding:5px 12px">+ Insumo</button>
+        <select id="sel-ins-${receta.id}" style="flex:1">${opts}</select>
+        <button onclick="vincularIngredienteReceta(${receta.id})" class="btn-primary" style="font-size:11px;padding:5px 12px">+ Insumo</button>
       </div>
-      <p class="text-xs mt-2" style="color:var(--muted)">Luego ve a Bodega → Producto → Receta & Salsas para vincular esta salsa a un producto y definir los gramos por porción.</p>
+      <p class="text-xs mt-2" style="color:var(--muted)">Luego ve a Bodega → Producto → Receta para vincular esta receta a un producto y definir los gramos por porción.</p>
     </div>`;
   }).join('');
 }
-function vincularIngredienteSalsa(salsaId){
-  const sel=document.getElementById('sel-ins-'+salsaId);
+function vincularIngredienteReceta(recetaId){
+  const sel=document.getElementById('sel-ins-'+recetaId);
   if(!sel) return;
   const insId=+sel.value;
-  const salsa=S.salsas.find(s=>s.id===salsaId);
-  if(!salsa) return;
-  if(salsa.ingredientes.find(i=>i.insId===insId)){toast('Insumo ya agregado');return;}
-  salsa.ingredientes.push({insId,gramos:0});
-  renderSalsas();
+  const receta=S.recetas.find(r=>r.id===recetaId);
+  if(!receta) return;
+  if(receta.ingredientes.find(i=>i.insId===insId)){toast('Insumo ya agregado');return;}
+  receta.ingredientes.push({insId,gramos:0});
+  renderRecetas();
 }
 
 // ══════════════════════════════════════════════════
-// COMPRAS — incluye insumos de salsas vinculadas a productos
+// DEMANDA DE INSUMOS — función pura, reutilizable (Compras Y Mando Central)
+// dueño: null/'liceo' → usa S.productos + S.recetas (Liceo)
+//        objeto empresa → usa emp.productos, SIN recetas vinculadas (Empresas no tiene ese sub-sistema)
+// Devuelve dem{insumoId: cantidadCruda} — receta × (meta - stockTerminado) × merma, SIN restar stock de insumo.
 // ══════════════════════════════════════════════════
+function calcularDemandaInsumos(dueño){
+  const esLiceo=(dueño===null||dueño===undefined||dueño==='liceo');
+  const productos=esLiceo?S.productos:(dueño.productos||[]);
+  const recetas=esLiceo?S.recetas:[]; // Empresas no tiene sub-sistema de recetas vinculadas
+  const dem={};
+  for(const prod of productos){
+    if(!prod.receta) prod.receta={};
+    const mermaFactor=1+(+(prod.merma||0)/100);
+    const real=Math.max(0,(prod.meta||0)-(prod.stockTerminado||0))*mermaFactor;
+    for(const[id,cant] of Object.entries(prod.receta)){
+      dem[id]=(dem[id]||0)+real*cant;
+    }
+    (prod.recetas||[]).forEach(sv=>{
+      const receta=recetas.find(r=>r.id===sv.recetaId);
+      if(!receta) return;
+      const mermaRecetaFactor=1+(+(receta.merma||0)/100);
+      const totalReceta=receta.ingredientes.reduce((s,i)=>s+i.gramos,0)||1; // gramos totales que rinde la receta completa
+      receta.ingredientes.forEach(ing=>{
+        const insReal=S.insumos.find(i=>i.id===ing.insId);
+        const esEspecia=insReal&&insReal.categoria==='especias';
+        const factor=esEspecia?1:mermaRecetaFactor; // especias no llevan la merma de la receta
+        const cantPorProd=(ing.gramos/totalReceta)*(sv.gramos||0)*factor; // proporción del ingrediente en la receta real, no /100 fijo
+        dem[ing.insId]=(dem[ing.insId]||0)+real*cantPorProd;
+      });
+    });
+  }
+  return dem;
+}
+
+// ══════════════════════════════════════════════════
+// INSUMOS BAJO MÍNIMO — usa calcularDemandaInsumos como umbral, compara contra stock real
+// Devuelve [{insumo, dem, stock, falta}] solo para los que están por debajo del umbral
+// ══════════════════════════════════════════════════
+function insumosBajoMinimo(dueño){
+  const esLiceo=(dueño===null||dueño===undefined||dueño==='liceo');
+  const insumos=esLiceo?S.insumos:(dueño.insumos||[]);
+  const dem=calcularDemandaInsumos(dueño);
+  const out=[];
+  for(const ins of insumos){
+    const demandado=dem[ins.id]||0;
+    if(demandado<=0) continue; // sin demanda esta semana, no hay umbral que chequear
+    const stock=ins.stock||0;
+    if(stock<demandado){
+      out.push({insumo:ins,dem:demandado,stock,falta:demandado-stock});
+    }
+  }
+  return out;
+}
+
+// ══════════════════════════════════════════════════
+// ESTADÍSTICAS DE VENTA POR VENDEDOR — max/min/promedio, usando el historial de registrosDiarios
+// Solo cuenta días donde el vendedor efectivamente vendió algo de ese producto (no cuenta ceros como "mínimo").
+// Con pocos días de historial, max=min=promedio va a coincidir — es esperado, no un bug, mejora con el tiempo.
+// ══════════════════════════════════════════════════
+// Stats de venta de un producto TOTAL (todos los vendedores sumados), usando ventasPorProducto.
+// claveProd debe ser 'Origen — prodId' (mismo formato que se guarda en el cobro).
+function statsVentaProducto(claveProd){
+  const dias=(S.registrosDiarios||[]).filter(r=>r.ventasPorProducto&&r.ventasPorProducto[claveProd]);
+  if(!dias.length) return null;
+  const valores=dias.map(r=>r.ventasPorProducto[claveProd]);
+  const max=Math.max(...valores),min=Math.min(...valores);
+  const prom=valores.reduce((s,v)=>s+v,0)/valores.length;
+  const total=valores.reduce((s,v)=>s+v,0);
+  return {max,min,promedio:prom,total,diasConDato:valores.length};
+}
+
+function statsVentaPorVendedor(claveEmp,prodId){
+  const dias=(S.registrosDiarios||[]).filter(r=>r.ventasPorEmpleadoProducto&&r.ventasPorEmpleadoProducto[claveEmp]&&r.ventasPorEmpleadoProducto[claveEmp][prodId]);
+  if(!dias.length) return null;
+  const valores=dias.map(r=>r.ventasPorEmpleadoProducto[claveEmp][prodId]);
+  const max=Math.max(...valores),min=Math.min(...valores);
+  const prom=valores.reduce((s,v)=>s+v,0)/valores.length;
+  return {max,min,promedio:prom,diasConDato:valores.length};
+}
+
+// ══════════════════════════════════════════════════
+// COMPRAS — incluye insumos de recetas vinculadas a productos
+// ══════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+// DEMANDA POR RECETA — función pura, reutilizable (Compras Y Mando Central Producción)
+// Para cada receta vinculada a algún producto, cuánto hay que fabricar en total
+// (sumando todos los productos que la usan × lo que les falta para su meta) y el desglose de insumos.
+// Solo Liceo — Empresas no tiene sub-sistema de recetas vinculadas.
+// ══════════════════════════════════════════════════
+function calcularDemandaRecetas(){
+  const demRecetas={}; // recetaId → { grTotales, ing:{insId→cantTotal} }
+  for(const prod of S.productos){
+    const real=Math.max(0,(prod.meta||0)-(prod.stockTerminado||0));
+    (prod.recetas||[]).forEach(sv=>{
+      if(!demRecetas[sv.recetaId]) demRecetas[sv.recetaId]={grTotales:0,ing:{}};
+      const grReceta=(sv.gramos||0)*real;
+      demRecetas[sv.recetaId].grTotales+=grReceta;
+    });
+  }
+  S.recetas.forEach(receta=>{
+    if(!demRecetas[receta.id]) return;
+    const mermaRecetaFactor=1+(+(receta.merma||0)/100);
+    const totalRecetaBase=receta.ingredientes.reduce((s,i)=>s+i.gramos,0)||1;
+    receta.ingredientes.forEach(ing=>{
+      if(!demRecetas[receta.id].ing[ing.insId]) demRecetas[receta.id].ing[ing.insId]=0;
+      const insReal=S.insumos.find(i=>i.id===ing.insId);
+      const esEspecia=insReal&&insReal.categoria==='especias';
+      const factorMerma=esEspecia?1:mermaRecetaFactor;
+      const factor=demRecetas[receta.id].grTotales/totalRecetaBase;
+      demRecetas[receta.id].ing[ing.insId]+=(ing.gramos*factor*factorMerma);
+    });
+  });
+  return demRecetas;
+}
+
 function calcularCompras(){
   // ── Fases ──
   [1,2,3].forEach(f=>{
@@ -1579,77 +2328,43 @@ function calcularCompras(){
     </div>`;
   }).join('');
 
-  // ── Explosión de insumos: receta + salsas vinculadas (con merma) ──
-  const dem={};
-  for(const prod of S.productos){
-    const mermaFactor=1+(+(prod.merma||0)/100); // ej: 5% merma → fabricar 1.05× lo necesario
-    const real=Math.max(0,(prod.meta||0)-(prod.stockTerminado||0))*mermaFactor;
-    for(const[id,cant] of Object.entries(prod.receta)){
-      dem[id]=(dem[id]||0)+real*cant;
-    }
-    (prod.salsas||[]).forEach(sv=>{
-      const salsa=S.salsas.find(s=>s.id===sv.salsaId);
-      if(!salsa) return;
-      salsa.ingredientes.forEach(ing=>{
-        const cantPorProd=ing.gramos*(sv.gramos||0)/100;
-        dem[ing.insId]=(dem[ing.insId]||0)+real*cantPorProd;
-      });
-    });
-  }
+  // ── Explosión de insumos: receta + recetas vinculadas (con merma) ──
+  const dem=calcularDemandaInsumos('liceo');
 
-  // ── Explosión de insumos POR SALSA (cuánta salsa fabricar + desglose) ──
-  // Para cada salsa, calcular cuántas "porciones" necesito en total
-  // (sumando todos los productos que la usan × su meta real)
-  const demSalsas={}; // salsaId → { porcionesNec, ingredientes:{insId→cantTotal} }
-  for(const prod of S.productos){
-    const real=Math.max(0,(prod.meta||0)-(prod.stockTerminado||0));
-    (prod.salsas||[]).forEach(sv=>{
-      if(!demSalsas[sv.salsaId]) demSalsas[sv.salsaId]={porcionesNec:0,grTotales:0,ing:{}};
-      // gramos de salsa necesarios para este producto en total
-      const grSalsa=(sv.gramos||0)*real;
-      demSalsas[sv.salsaId].grTotales+=grSalsa;
-    });
-  }
-  // Desglose ingredientes por salsa
-  S.salsas.forEach(salsa=>{
-    if(!demSalsas[salsa.id]) return;
-    salsa.ingredientes.forEach(ing=>{
-      if(!demSalsas[salsa.id].ing[ing.insId]) demSalsas[salsa.id].ing[ing.insId]=0;
-      // Proporción: si la receta de la salsa totaliza X gramos, necesito escalar
-      const totalRecetaSalsa=salsa.ingredientes.reduce((s,i)=>s+i.gramos,0)||1;
-      const factor=demSalsas[salsa.id].grTotales/totalRecetaSalsa;
-      demSalsas[salsa.id].ing[ing.insId]+=(ing.gramos*factor);
-    });
-  });
+  // ── Explosión de insumos POR RECETA (cuánta receta fabricar + desglose) ──
+  const demRecetas=calcularDemandaRecetas();
 
-  // ── Render sección salsas ──
-  let salsaSecEl=document.getElementById('seccion-salsas-compras');
-  if(!salsaSecEl){
+  // ── Render sección recetas ──
+  let recetaSecEl=document.getElementById('seccion-recetas-compras');
+  if(!recetaSecEl){
     // insertar antes de tabla-compras parent
     const tablaCard=document.getElementById('tabla-compras').closest('.card');
-    salsaSecEl=document.createElement('div');
-    salsaSecEl.id='seccion-salsas-compras';
-    salsaSecEl.className='card p-4';
-    tablaCard.parentNode.insertBefore(salsaSecEl,tablaCard);
+    recetaSecEl=document.createElement('div');
+    recetaSecEl.id='seccion-recetas-compras';
+    recetaSecEl.className='card p-4';
+    tablaCard.parentNode.insertBefore(recetaSecEl,tablaCard);
   }
-  const salsasConDemanda=S.salsas.filter(s=>demSalsas[s.id]&&demSalsas[s.id].grTotales>0);
-  if(salsasConDemanda.length){
-    salsaSecEl.innerHTML=`
-      <h3 class="font-semibold text-sm mb-3">🥣 Salsas a fabricar esta semana</h3>
+  const recetasConDemanda=S.recetas.filter(r=>demRecetas[r.id]&&demRecetas[r.id].grTotales>0);
+  if(recetasConDemanda.length){
+    recetaSecEl.innerHTML=`
+      <h3 class="font-semibold text-sm mb-3">📋 Recetas a fabricar esta semana</h3>
       <div class="space-y-3">
-        ${salsasConDemanda.map(salsa=>{
-          const d=demSalsas[salsa.id];
-          const ingDesglose=salsa.ingredientes.map(ing=>{
+        ${recetasConDemanda.map(receta=>{
+          const d=demRecetas[receta.id];
+          const mermaRecetaFactor=1+(+(receta.merma||0)/100);
+          const totalRecetaBase=receta.ingredientes.reduce((s,i)=>s+i.gramos,0)||1;
+          const ingDesglose=receta.ingredientes.map(ing=>{
             const ins=S.insumos.find(i=>i.id===ing.insId);
             if(!ins) return '';
-            const totalRecetaSalsa=salsa.ingredientes.reduce((s,i)=>s+i.gramos,0)||1;
-            const factor=d.grTotales/totalRecetaSalsa;
-            const cantNec=ing.gramos*factor;
+            const esEspecia=ins.categoria==='especias';
+            const factorMerma=esEspecia?1:mermaRecetaFactor;
+            const factor=d.grTotales/totalRecetaBase;
+            const cantNec=ing.gramos*factor*factorMerma;
             const paqNec=cantNec/ins.cantPaquete;
             const paqBod=(ins.stock||0)/ins.cantPaquete;
             const paqComprar=Math.ceil(Math.max(0,paqNec-paqBod));
             return `<div class="flex items-center gap-2 py-1" style="border-bottom:1px solid var(--border)">
-              <span class="text-xs flex-1" style="color:var(--muted)">${ins.nombre}</span>
+              <span class="text-xs flex-1" style="color:var(--muted)">${ins.nombre}${esEspecia?' 🧂':''}</span>
               <span class="text-xs">${cantNec.toFixed(1)} ${ins.unidad==='Gramos'?'g':'u'}</span>
               <span class="text-xs" style="color:var(--muted)">= ${paqNec.toFixed(2)} paq.</span>
               <span class="tag-${paqComprar>0?'yellow':'green'}">${paqComprar>0?'Comprar '+paqComprar+' paq.':'En bodega ✓'}</span>
@@ -1657,19 +2372,19 @@ function calcularCompras(){
           }).join('');
           return `<div class="card2 p-3">
             <div class="flex items-center gap-3 mb-2">
-              <span class="text-sm font-semibold" style="color:var(--accent)">🥣 ${salsa.nombre}</span>
+              <span class="text-sm font-semibold" style="color:var(--accent)">📋 ${receta.nombre}</span>
               <span class="tag-blue">${d.grTotales.toFixed(1)} g totales a fabricar</span>
             </div>
             <div>${ingDesglose||'<p class="text-xs" style="color:var(--muted)">Sin ingredientes definidos</p>'}</div>
           </div>`;
         }).join('')}
       </div>`;
-    salsaSecEl.style.display='block';
+    recetaSecEl.style.display='block';
   } else {
-    salsaSecEl.style.display='none';
+    recetaSecEl.style.display='none';
   }
 
-  // ── Tabla compras insumos (incluyendo los que usan las salsas, ya en dem[]) ──
+  // ── Tabla compras insumos (incluyendo los que usan las recetas, ya en dem[]) ──
   let totalCosto=0;
   const filas=[];
   for(const ins of S.insumos){
@@ -1898,9 +2613,72 @@ function renderStockMerma(){
   if(totalEl) totalEl.textContent=totalUnidades+' u';
 }
 
+// ══════════════════════════════════════════════════
+// DETALLE DE PRODUCTOS VENDIDOS — Liceo (usa registrosDiarios acumulado, ventasPorProducto)
+// ══════════════════════════════════════════════════
+function renderDetalleVentasLiceo(){
+  const cont=document.getElementById('detalle-ventas-liceo');
+  if(!cont) return;
+  const filas=S.productos.map(p=>{
+    const clave='Liceo — '+p.id;
+    const st=statsVentaProducto(clave);
+    if(!st) return null;
+    return `<tr>
+      <td class="td" data-label="Producto" style="font-weight:600">${p.nombre}</td>
+      <td class="td" data-label="Total">${st.total} u</td>
+      <td class="td" data-label="Promedio/día">${st.promedio.toFixed(1)} u</td>
+      <td class="td" data-label="Máximo">${st.max} u</td>
+      <td class="td" data-label="Mínimo">${st.min} u</td>
+      <td class="td" data-label="Días con venta">${st.diasConDato}</td>
+    </tr>`;
+  }).filter(Boolean);
+  if(!filas.length){
+    cont.innerHTML='<p class="text-xs text-center py-3" style="color:var(--muted)">Sin historial de ventas todavía — se va llenando a medida que cobrás.</p>';
+    return;
+  }
+  cont.innerHTML=`<div class="overflow-x-auto"><table class="tbl-mobile-cards" style="width:100%">
+    <thead><tr><th class="th">Producto</th><th class="th">Total</th><th class="th">Promedio/día</th><th class="th">Máximo</th><th class="th">Mínimo</th><th class="th">Días con venta</th></tr></thead>
+    <tbody>${filas.join('')}</tbody>
+  </table></div>`;
+}
+
+function agregarMiniBodega(empId,prodId){
+  const emp=S.empleados.find(e=>e.id===empId);
+  if(!emp) return;
+  const input=document.getElementById('mb-add-'+empId+'-'+prodId);
+  const cant=+((input&&input.value)||0);
+  if(!cant||cant<=0){ toast('Poné una cantidad válida'); return; }
+  if(!emp.miniBodega) emp.miniBodega={};
+  emp.miniBodega[prodId]=(emp.miniBodega[prodId]||0)+cant;
+  guardarEstado();
+  renderEmpleados();
+  toast('✓ Agregado a mini bodega');
+}
+function restarMiniBodega(empId,prodId){
+  const emp=S.empleados.find(e=>e.id===empId);
+  if(!emp) return;
+  const input=document.getElementById('mb-add-'+empId+'-'+prodId);
+  const cant=+((input&&input.value)||0);
+  if(!cant||cant<=0){ toast('Poné una cantidad válida'); return; }
+  if(!emp.miniBodega) emp.miniBodega={};
+  emp.miniBodega[prodId]=Math.max(0,(emp.miniBodega[prodId]||0)-cant);
+  guardarEstado();
+  renderEmpleados();
+  toast('✓ Restado de mini bodega');
+}
+function corregirMiniBodega(empId,prodId,valor){
+  const emp=S.empleados.find(e=>e.id===empId);
+  if(!emp) return;
+  if(!emp.miniBodega) emp.miniBodega={};
+  emp.miniBodega[prodId]=Math.max(0,valor||0);
+  guardarEstado();
+  renderEmpleados();
+}
 function renderEmpleados(){
   const lista=document.getElementById('lista-empleados');
+  try{
   lista.innerHTML=S.empleados.map(emp=>{
+    emp.entregados=emp.entregados||{}; emp.almuerzo=emp.almuerzo||{}; emp.descuentos=emp.descuentos||[]; emp.vueltos=emp.vueltos||[]; emp.miniBodega=emp.miniBodega||{}; emp.stockDescontado=emp.stockDescontado||{};
     const sinCom=!!emp.sinComision;
     const venHTML=S.productos.map(p=>{
       const ent=emp.entregados[p.id]||0,alm=emp.almuerzo[p.id]||0;
@@ -1942,6 +2720,7 @@ function renderEmpleados(){
         </div>
         <div class="flex items-center gap-2">
           <button onclick="event.stopPropagation();ingresoPorEmpleado(${emp.id})" class="btn-info" style="padding:4px 9px;font-size:11px">📥 Cobrar</button>
+          <button onclick="event.stopPropagation();renderDetalleSemanaEmpleado(${emp.id})" class="btn-ghost" style="padding:4px 9px;font-size:11px" title="Detalle de lo vendido, día a día, de esta semana">📊 Semana</button>
           <button onclick="event.stopPropagation();registrarMermaEmpleado(${emp.id})" class="btn-ghost" style="padding:4px 9px;font-size:11px" title="Registrar merma recuperable">🔧 Merma</button>
           <button onclick="event.stopPropagation();confirmarEliminar('empleado',${emp.id})" class="btn-danger" style="padding:3px 7px;font-size:11px">✕</button>
         </div>
@@ -1970,6 +2749,33 @@ function renderEmpleados(){
               <td class="td text-right font-bold" data-label="Comisión" style="color:var(--warn)">${fmt(tCom)}</td>
             </tr></tfoot>
           </table>
+        </div>
+        <div class="card3 p-3 mb-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold" style="color:var(--accent)">📦 Mini bodega — lo que tiene físicamente en su caja</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full tbl-mobile-cards">
+              <thead><tr><th class="th text-left">Producto</th><th class="th text-right">Tiene ahora</th><th class="th text-right">Agregar</th></tr></thead>
+              <tbody>${S.productos.map(p=>{
+                const saldo=emp.miniBodega[p.id]||0;
+                return `<tr>
+                  <td class="td" data-label="Producto">${p.nombre}</td>
+                  <td class="td text-right" data-label="Tiene ahora">
+                    <input type="number" value="${saldo}" min="0" style="width:60px;text-align:right;font-weight:600;color:var(--accent2)" title="Corregir directamente" onchange="corregirMiniBodega(${emp.id},${p.id},+this.value)">
+                  </td>
+                  <td class="td text-right" data-label="Agregar">
+                    <div class="flex items-center justify-end gap-1">
+                      <input type="number" id="mb-add-${emp.id}-${p.id}" placeholder="0" min="0" style="width:55px;text-align:right">
+                      <button onclick="agregarMiniBodega(${emp.id},${p.id})" class="btn-primary" style="padding:3px 8px;font-size:11px" title="Sumar">+</button>
+                      <button onclick="restarMiniBodega(${emp.id},${p.id})" class="btn-danger" style="padding:3px 8px;font-size:11px" title="Restar">−</button>
+                    </div>
+                  </td>
+                </tr>`;
+              }).join('')}</tbody>
+            </table>
+          </div>
+          <p class="text-xs mt-2" style="color:var(--muted)">Se descuenta solo al Cobrar (según lo vendido). No se resetea con "Resetear semana" — es un saldo que vos manejás a mano.</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
           <div class="card3 p-3">
@@ -2008,6 +2814,11 @@ function renderEmpleados(){
   renderLibro();
 
   renderStockMerma();
+  }catch(err){
+    // Nunca más queda en blanco en silencio: si algo falla, se ve el motivo en pantalla.
+    lista.innerHTML=`<div class="card2 p-3" style="border-color:var(--danger)"><p class="text-xs font-semibold" style="color:var(--danger)">⚠️ Error mostrando empleados: ${err.message}</p><p class="text-xs mt-1" style="color:var(--muted)">Mandá este mensaje para que se arregle.</p></div>`;
+    console.error('renderEmpleados:',err);
+  }
 }
 
 function toggleEmpBody(empId){
@@ -2029,6 +2840,67 @@ function updateAlmuerzo(empId,prodId,val){
 function addDescuento(empId){S.empleados.find(e=>e.id===empId).descuentos.push({concepto:'Descuento',monto:0});renderEmpleados();}
 function addVuelto(empId){S.empleados.find(e=>e.id===empId).vueltos.push({concepto:'Vuelto',monto:0});renderEmpleados();}
 
+// ══════════════════════════════════════════════════
+// VENTA RÁPIDA — venta directa del dueño, sin pasar por empleado, sin comisión
+// dueño: 'liceo' o el objeto empresa
+// ══════════════════════════════════════════════════
+function ventaRapida(prodId,dueño){
+  const esLiceo=(dueño===null||dueño===undefined||dueño==='liceo');
+  const prod=esLiceo?S.productos.find(p=>p.id===prodId):(dueño.productos||[]).find(p=>p.id===prodId);
+  if(!prod) return;
+  abrirModal(`Venta rápida — ${prod.nombre}`,`
+    <div class="space-y-3">
+      <div class="card3 p-3 space-y-1 text-sm">
+        <div class="flex justify-between"><span style="color:var(--muted)">Stock actual</span><span>${prod.stockTerminado||0} u</span></div>
+      </div>
+      <div>
+        <label class="text-xs" style="color:var(--muted)">Cantidad</label>
+        <input type="number" id="vr-cant" value="1" min="1" max="${prod.stockTerminado||0}" class="mt-1" oninput="
+          const t=document.getElementById('vr-total');
+          t.textContent='$'+Math.round((+this.value||0)*(+document.getElementById('vr-precio').value||0)).toLocaleString('es-CL');
+        ">
+      </div>
+      <div>
+        <label class="text-xs" style="color:var(--muted)">Precio unitario $</label>
+        <input type="number" id="vr-precio" value="${prod.precioVenta||0}" min="0" class="mt-1" oninput="
+          const t=document.getElementById('vr-total');
+          t.textContent='$'+Math.round((+document.getElementById('vr-cant').value||0)*(+this.value||0)).toLocaleString('es-CL');
+        ">
+      </div>
+      <div class="flex justify-between text-sm font-semibold pt-1" style="border-top:1px solid var(--border)">
+        <span>Total</span>
+        <span id="vr-total" style="color:var(--accent2)">${fmt(prod.precioVenta||0)}</span>
+      </div>
+    </div>
+  `,()=>{
+    const cant=Math.max(1,+document.getElementById('vr-cant').value||0);
+    const precio=Math.max(0,+document.getElementById('vr-precio').value||0);
+    if(cant>(prod.stockTerminado||0)){ toast('No hay stock suficiente'); return; }
+    const total=cant*precio;
+    prod.stockTerminado=(prod.stockTerminado||0)-cant;
+    // Ingreso al libro correspondiente — sin comisión, es venta directa
+    if(esLiceo){
+      agregarTx('ingreso',`Venta rápida — ${prod.nombre}`,total,'Venta directa');
+    } else {
+      if(!dueño.nextId) dueño.nextId=1;
+      dueño.libro.push({id:dueño.nextId++,fecha:fechaHoy(),concepto:`Venta rápida — ${prod.nombre}`,tipo:'ingreso',monto:total,origen:'Venta directa'});
+    }
+    // Snapshot diario — misma estructura que usan los cobros normales
+    if(!S.registrosDiarios) S.registrosDiarios=[];
+    const hoy=fechaHoy();
+    let rdHoy=S.registrosDiarios.find(r=>r.fecha===hoy);
+    if(!rdHoy){rdHoy={fecha:hoy,ventasPorEmp:{},totalBruto:0,ventasPorProducto:{},ventasPorEmpleadoProducto:{}};S.registrosDiarios.push(rdHoy);}
+    if(!rdHoy.ventasPorProducto) rdHoy.ventasPorProducto={};
+    const origen=esLiceo?'Liceo':dueño.nombre;
+    const claveProd=origen+' — '+prod.id;
+    rdHoy.ventasPorProducto[claveProd]=(rdHoy.ventasPorProducto[claveProd]||0)+cant;
+    rdHoy.totalBruto=(rdHoy.totalBruto||0)+total;
+    guardarEstado();
+    toast(`Venta rápida ✓ — ${fmt(total)}`);
+    if(esLiceo){ renderBodega(); } else { renderEmpresaProductos(); }
+  });
+}
+
 function ingresoPorEmpleado(empId){
   const emp=S.empleados.find(e=>e.id===empId);
   const sinCom=!!emp.sinComision;
@@ -2038,7 +2910,7 @@ function ingresoPorEmpleado(empId){
   const vueltT=(emp.vueltos||[]).reduce((s,v)=>s+v.monto,0);
   const esperado=tBruto-descT+vueltT;
   // ARKHE.Debt: deudas activas del empleado, propuesta de descuento automático sobre su comisión
-  const deudasEmp=(S.deudas||[]).filter(d=>d.deudorTipo==='empleado'&&d.empleadoId===empId&&_estadoDeuda(d)!=='pagada');
+  const deudasEmp=(S.deudas||[]).filter(d=>d.deudorTipo==='empleado'&&d.empleadoId===empId&&(d.empresaOrigen||'Liceo')==='Liceo'&&_estadoDeuda(d)!=='pagada');
   const saldoDeudaEmp=deudasEmp.reduce((s,d)=>s+calcularSaldoDeuda(d),0);
   const cuotaSugerida=Math.min(tCom,saldoDeudaEmp);
   const hayPropuestaDeuda=!sinCom&&tCom>0&&saldoDeudaEmp>0;
@@ -2073,14 +2945,19 @@ function ingresoPorEmpleado(empId){
     // Se descuenta la diferencia entre lo vendido acumulado y lo que ya se descontó en cobros previos,
     // para no restar dos veces si se cobra más de una vez sin resetear los campos.
     if(!emp.stockDescontado) emp.stockDescontado={};
+    if(!emp.miniBodega) emp.miniBodega={};
+    const claveEmp_L='Liceo — '+emp.nombre;
+    const vendidoPorProdHoy={}; // se llena en este mismo bucle, para no recalcular vendidoActual dos veces
     S.productos.forEach(p=>{
       const vendidoActual=Math.max(0,(emp.entregados[p.id]||0)-(emp.almuerzo[p.id]||0));
       const yaDescontado=emp.stockDescontado[p.id]||0;
       const pendiente=vendidoActual-yaDescontado;
       if(pendiente!==0){
         p.stockTerminado=Math.max(0,(p.stockTerminado||0)-pendiente);
+        emp.miniBodega[p.id]=Math.max(0,(emp.miniBodega[p.id]||0)-pendiente); // se descuenta lo vendido de su caja física
         emp.stockDescontado[p.id]=vendidoActual;
       }
+      if(pendiente>0) vendidoPorProdHoy[p.id]=(vendidoPorProdHoy[p.id]||0)+pendiente; // solo unidades nuevas vendidas en ESTE cobro
     });
     // Registrar ingreso bruto recibido
     agregarTx('ingreso',c,m,emp.nombre);
@@ -2113,11 +2990,247 @@ function ingresoPorEmpleado(empId){
     if(!S.gastossFijos) S.gastossFijos=[];
     if(!S.divisionDinero) S.divisionDinero=[];
     let rdHoy=S.registrosDiarios.find(r=>r.fecha===hoy);
-    if(!rdHoy){rdHoy={fecha:hoy,ventasPorEmp:{},totalBruto:0};S.registrosDiarios.push(rdHoy);}
-    rdHoy.ventasPorEmp[emp.nombre]=(rdHoy.ventasPorEmp[emp.nombre]||0)+m;
+    if(!rdHoy){rdHoy={fecha:hoy,ventasPorEmp:{},totalBruto:0,ventasPorProducto:{},ventasPorEmpleadoProducto:{}};S.registrosDiarios.push(rdHoy);}
+    if(!rdHoy.ventasPorProducto) rdHoy.ventasPorProducto={};
+    if(!rdHoy.ventasPorEmpleadoProducto) rdHoy.ventasPorEmpleadoProducto={};
+    rdHoy.ventasPorEmp[claveEmp_L]=(rdHoy.ventasPorEmp[claveEmp_L]||0)+m;
     rdHoy.totalBruto=(rdHoy.totalBruto||0)+m;
+    if(!rdHoy.ventasPorEmpleadoProducto[claveEmp_L]) rdHoy.ventasPorEmpleadoProducto[claveEmp_L]={};
+    Object.entries(vendidoPorProdHoy).forEach(([pId,cant])=>{
+      const claveProd_L='Liceo — '+pId;
+      rdHoy.ventasPorProducto[claveProd_L]=(rdHoy.ventasPorProducto[claveProd_L]||0)+cant;
+      rdHoy.ventasPorEmpleadoProducto[claveEmp_L][pId]=(rdHoy.ventasPorEmpleadoProducto[claveEmp_L][pId]||0)+cant;
+    });
     guardarEstado();
   });
+}
+
+// Parsea fechas en formato dd-mm-yyyy (el que produce fechaHoy() vía toLocaleDateString('es-CL'))
+function _parseFechaDMY(f){
+  const p=(f||'').split('-');
+  if(p.length<3) return null;
+  return new Date(+p[2],+p[1]-1,+p[0]);
+}
+// Lunes 00:00 de la semana que contiene la fecha dada
+function _inicioSemana(d){
+  const dia=d.getDay(); // 0=domingo..6=sábado
+  const offset=dia===0?6:dia-1; // días desde el lunes
+  const lunes=new Date(d.getFullYear(),d.getMonth(),d.getDate()-offset);
+  return lunes;
+}
+
+// Detalle de unidades vendidas por producto, día a día, de la semana en curso, para UN empleado.
+// Usa S.registrosDiarios[].ventasPorEmpleadoProducto, que ya se guarda cada vez que se cobra.
+function renderDetalleSemanaEmpleado(empId){
+  const emp=S.empleados.find(e=>e.id===empId);
+  if(!emp) return;
+  const clave='Liceo — '+emp.nombre;
+  const lunes=_inicioSemana(new Date());
+  const dias=(S.registrosDiarios||[])
+    .filter(r=>r.ventasPorEmpleadoProducto&&r.ventasPorEmpleadoProducto[clave])
+    .map(r=>({r,f:_parseFechaDMY(r.fecha)}))
+    .filter(x=>x.f&&x.f>=lunes)
+    .sort((a,b)=>a.f-b.f);
+  if(!dias.length){
+    abrirModal(`Detalle semana — ${emp.nombre}`,`<p class="text-xs text-center py-3" style="color:var(--muted)">Sin ventas registradas esta semana todavía — se va guardando cada vez que le cobrás.</p>`,null,'Cerrar');
+    return;
+  }
+  // Productos que aparecieron esta semana para este empleado (mantener orden de S.productos)
+  const idsConVenta=new Set();
+  dias.forEach(({r})=>Object.keys(r.ventasPorEmpleadoProducto[clave]).forEach(id=>idsConVenta.add(id)));
+  const prods=S.productos.filter(p=>idsConVenta.has(String(p.id)));
+  const totalesProd={};
+  const filas=dias.map(({r})=>{
+    let totalDia=0;
+    const celdas=prods.map(p=>{
+      const cant=r.ventasPorEmpleadoProducto[clave][p.id]||0;
+      totalDia+=cant;
+      totalesProd[p.id]=(totalesProd[p.id]||0)+cant;
+      return `<td class="td text-right" data-label="${p.nombre}">${cant||'—'}</td>`;
+    }).join('');
+    return `<tr><td class="td font-semibold" data-label="Fecha">${r.fecha}</td>${celdas}<td class="td text-right font-bold" data-label="Total" style="color:var(--accent2)">${totalDia}</td></tr>`;
+  }).join('');
+  const totalGeneral=Object.values(totalesProd).reduce((s,v)=>s+v,0);
+  const filaTotal=`<tr style="border-top:1px solid var(--border)"><td class="td font-semibold">Total semana</td>${prods.map(p=>`<td class="td text-right font-bold" data-label="${p.nombre}">${totalesProd[p.id]||0}</td>`).join('')}<td class="td text-right font-bold" style="color:var(--accent2)">${totalGeneral}</td></tr>`;
+  abrirModal(`Detalle semana — ${emp.nombre}`,`
+    <div class="overflow-x-auto">
+      <table class="w-full tbl-mobile-cards" style="min-width:${140+prods.length*80}px">
+        <thead><tr>
+          <th class="th text-left">Fecha</th>
+          ${prods.map(p=>`<th class="th text-right">${p.nombre}</th>`).join('')}
+          <th class="th text-right">Total</th>
+        </tr></thead>
+        <tbody>${filas}</tbody>
+        <tfoot>${filaTotal}</tfoot>
+      </table>
+    </div>`,null,'Cerrar');
+}
+
+// Lista completa de ventas por vendedor — fecha, quién vendió, cuánto, y promedio/mín/máx por vendedor.
+// Filtrable por semana específica, semana actual, o todo el historial (selector dentro del modal).
+let _histSemanaSel='actual'; // 'actual' | 'todo' | 'YYYY-MM-DD' (lunes de esa semana)
+function renderHistorialVentasVendedores(){
+  const todasFilas=[]; // {fecha,f,vendedor,cantidad,monto,prods:{prodId:cant},registro}
+  (S.registrosDiarios||[]).forEach(r=>{
+    const claves=new Set([
+      ...Object.keys(r.ventasPorEmpleadoProducto||{}),
+      ...Object.keys(r.ventasPorEmp||{})
+    ]);
+    claves.forEach(clave=>{
+      if(!clave.startsWith('Liceo — ')) return; // solo vendedores del Liceo
+      const vendedor=clave.slice('Liceo — '.length);
+      const prods=(r.ventasPorEmpleadoProducto&&r.ventasPorEmpleadoProducto[clave])||{};
+      const cantidad=Object.values(prods).reduce((s,v)=>s+v,0);
+      const monto=(r.ventasPorEmp&&r.ventasPorEmp[clave])||0;
+      if(cantidad>0||monto>0) todasFilas.push({fecha:r.fecha,f:_parseFechaDMY(r.fecha),vendedor,cantidad,monto,prods,registro:r});
+    });
+  });
+  if(!todasFilas.length){
+    abrirModal('📊 Historial de ventas por vendedor','<p class="text-xs text-center py-3" style="color:var(--muted)">Sin ventas registradas todavía — se va guardando cada vez que cobrás.</p>',null,'Cerrar');
+    return;
+  }
+
+  // Semanas con datos disponibles, para armar el selector (clave = lunes en formato ISO)
+  const semanasMap={};
+  todasFilas.forEach(x=>{
+    const lunes=_inicioSemana(x.f);
+    const key=lunes.toISOString().slice(0,10);
+    if(!semanasMap[key]) semanasMap[key]=lunes;
+  });
+  const lunesActual=_inicioSemana(new Date());
+  const keyActual=lunesActual.toISOString().slice(0,10);
+  const fmtD=d=>d.toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit'});
+
+  // Aplicar filtro de semana elegido
+  let filas=todasFilas;
+  if(_histSemanaSel!=='todo'){
+    const keySel=_histSemanaSel==='actual'?keyActual:_histSemanaSel;
+    const lunesSel=semanasMap[keySel]||lunesActual;
+    const domingoSel=new Date(lunesSel.getFullYear(),lunesSel.getMonth(),lunesSel.getDate()+6,23,59,59);
+    filas=todasFilas.filter(x=>x.f>=lunesSel&&x.f<=domingoSel);
+  }
+
+  // Selector de semana (arriba del modal, siempre visible)
+  const semanasKeysOrdenadas=Object.keys(semanasMap).sort((a,b)=>b.localeCompare(a));
+  const opciones=[`<option value="actual" ${_histSemanaSel==='actual'?'selected':''}>Semana actual (${fmtD(lunesActual)} al ${fmtD(new Date(lunesActual.getFullYear(),lunesActual.getMonth(),lunesActual.getDate()+6))})</option>`]
+    .concat(semanasKeysOrdenadas.filter(k=>k!==keyActual).map(k=>{
+      const lunes=semanasMap[k];
+      const domingo=new Date(lunes.getFullYear(),lunes.getMonth(),lunes.getDate()+6);
+      return `<option value="${k}" ${_histSemanaSel===k?'selected':''}>Semana ${fmtD(lunes)} al ${fmtD(domingo)}</option>`;
+    }))
+    .concat([`<option value="todo" ${_histSemanaSel==='todo'?'selected':''}>Todo el historial</option>`])
+    .join('');
+  const selectorHTML=`<div class="mb-3">
+    <label class="text-xs" style="color:var(--muted)">Ver</label>
+    <select onchange="_histSemanaSel=this.value;renderHistorialVentasVendedores()" class="mt-1">${opciones}</select>
+  </div>`;
+
+  if(!filas.length){
+    abrirModal('📊 Historial de ventas por vendedor',selectorHTML+'<p class="text-xs text-center py-3" style="color:var(--muted)">Sin ventas registradas en esta semana.</p>',null,'Cerrar');
+    return;
+  }
+  filas.sort((a,b)=>(b.f-a.f)||a.vendedor.localeCompare(b.vendedor));
+
+  // Productos que aparecieron en el rango filtrado (mantiene el orden de S.productos)
+  const idsConVenta=new Set();
+  filas.forEach(x=>Object.keys(x.prods).forEach(id=>idsConVenta.add(id)));
+  const prodsList=S.productos.filter(p=>idsConVenta.has(String(p.id)));
+
+  const filasHTML=filas.map(x=>{
+    const celdas=prodsList.map(p=>`<td class="td text-right" data-label="${p.nombre}">${x.prods[p.id]||'—'}</td>`).join('');
+    return `<tr>
+    <td class="td" data-label="Fecha">${x.fecha}</td>
+    <td class="td" data-label="Vendedor">${x.vendedor}</td>
+    ${celdas}
+    <td class="td text-right font-bold" data-label="Total" style="color:var(--accent2)">${x.cantidad}</td>
+    <td class="td text-right" data-label="Monto">${fmt(x.monto)}</td>
+  </tr>`;
+  }).join('');
+
+  // Promedio, mínimo y máximo por vendedor — solo cuenta días donde efectivamente vendió/cobró algo (no ceros), dentro del rango filtrado
+  const porVendedor={};
+  filas.forEach(x=>{
+    if(!porVendedor[x.vendedor]) porVendedor[x.vendedor]={dias:0,totalCant:0,totalMonto:0,minCant:Infinity,maxCant:-Infinity};
+    const d=porVendedor[x.vendedor];
+    d.dias++;
+    d.totalCant+=x.cantidad;
+    d.totalMonto+=x.monto;
+    d.minCant=Math.min(d.minCant,x.cantidad);
+    d.maxCant=Math.max(d.maxCant,x.cantidad);
+  });
+  const resumenHTML=Object.entries(porVendedor).map(([nombre,d])=>`<tr>
+    <td class="td font-semibold" data-label="Vendedor">${nombre}</td>
+    <td class="td text-right" data-label="Días">${d.dias}</td>
+    <td class="td text-right" data-label="Total u.">${d.totalCant}</td>
+    <td class="td text-right font-bold" style="color:var(--accent2)" data-label="Prom. u/día">${(d.totalCant/d.dias).toFixed(1)}</td>
+    <td class="td text-right" style="color:var(--danger)" data-label="Mín. u/día">${d.minCant}</td>
+    <td class="td text-right" style="color:var(--accent)" data-label="Máx. u/día">${d.maxCant}</td>
+    <td class="td text-right" data-label="Prom. $/día">${fmt(d.totalMonto/d.dias)}</td>
+  </tr>`).join('');
+
+  // Detalle por vendedor y producto individual — calculado SOLO sobre los registros del rango filtrado
+  const registrosFiltrados=[...new Set(filas.map(x=>x.registro))];
+  function statsLocal(claveEmp,prodId){
+    const dias=registrosFiltrados.filter(r=>r.ventasPorEmpleadoProducto&&r.ventasPorEmpleadoProducto[claveEmp]&&r.ventasPorEmpleadoProducto[claveEmp][prodId]);
+    if(!dias.length) return null;
+    const valores=dias.map(r=>r.ventasPorEmpleadoProducto[claveEmp][prodId]);
+    return {max:Math.max(...valores),min:Math.min(...valores),promedio:valores.reduce((s,v)=>s+v,0)/valores.length,diasConDato:valores.length};
+  }
+  const detalleProdHTML=Object.keys(porVendedor).sort().map(vendedor=>{
+    const claveEmp='Liceo — '+vendedor;
+    const filasProd=prodsList.map(p=>{
+      const st=statsLocal(claveEmp,p.id);
+      if(!st) return '';
+      return `<tr>
+        <td class="td" data-label="Producto">${p.nombre}</td>
+        <td class="td text-right" data-label="Días">${st.diasConDato}</td>
+        <td class="td text-right font-bold" style="color:var(--accent2)" data-label="Prom. u/día">${st.promedio.toFixed(1)}</td>
+        <td class="td text-right" style="color:var(--danger)" data-label="Mín.">${st.min}</td>
+        <td class="td text-right" style="color:var(--accent)" data-label="Máx.">${st.max}</td>
+      </tr>`;
+    }).join('');
+    if(!filasProd) return '';
+    return `<div class="mb-3">
+      <p class="text-xs font-semibold mb-1">${vendedor}</p>
+      <div class="overflow-x-auto">
+        <table class="w-full tbl-mobile-cards">
+          <thead><tr><th class="th text-left">Producto</th><th class="th text-right">Días</th><th class="th text-right">Prom. u/día</th><th class="th text-right">Mín.</th><th class="th text-right">Máx.</th></tr></thead>
+          <tbody>${filasProd}</tbody>
+        </table>
+      </div>
+    </div>`;
+  }).join('');
+
+  abrirModal('📊 Historial de ventas por vendedor',`
+    ${selectorHTML}
+    <div class="space-y-4">
+      <div>
+        <p class="text-xs font-semibold mb-2" style="color:var(--muted)">PROMEDIO POR VENDEDOR</p>
+        <div class="overflow-x-auto">
+          <table class="w-full tbl-mobile-cards">
+            <thead><tr><th class="th text-left">Vendedor</th><th class="th text-right">Días</th><th class="th text-right">Total u.</th><th class="th text-right">Prom. u/día</th><th class="th text-right">Mín. u/día</th><th class="th text-right">Máx. u/día</th><th class="th text-right">Prom. $/día</th></tr></thead>
+            <tbody>${resumenHTML}</tbody>
+          </table>
+        </div>
+      </div>
+      <div>
+        <p class="text-xs font-semibold mb-2" style="color:var(--muted)">DETALLE POR VENDEDOR Y PRODUCTO</p>
+        ${detalleProdHTML||'<p class="text-xs" style="color:var(--muted)">Sin datos por producto.</p>'}
+      </div>
+      <div>
+        <p class="text-xs font-semibold mb-2" style="color:var(--muted)">DETALLE DÍA A DÍA POR PRODUCTO</p>
+        <div class="overflow-x-auto" style="max-height:320px;overflow-y:auto">
+          <table class="w-full tbl-mobile-cards" style="min-width:${260+prodsList.length*80}px">
+            <thead><tr>
+              <th class="th text-left">Fecha</th><th class="th text-left">Vendedor</th>
+              ${prodsList.map(p=>`<th class="th text-right">${p.nombre}</th>`).join('')}
+              <th class="th text-right">Total</th><th class="th text-right">Monto</th>
+            </tr></thead>
+            <tbody>${filasHTML}</tbody>
+          </table>
+        </div>
+      </div>
+    </div>`,null,'Cerrar');
 }
 
 // ══════════════════════════════════════════════════
@@ -2308,14 +3421,14 @@ function salirDeEmpresaSilencioso(){ /* no-op en v6 */ }
 function showEmpresaTab(tabId){
   // All panel ids — both Liceo and generic
   const allPanels=[
-    'emp-tab-dashboard','emp-tab-bodega','emp-tab-salsas','emp-tab-planificacion',
+    'emp-tab-dashboard','emp-tab-bodega','emp-tab-recetas','emp-tab-planificacion',
     'emp-tab-empleados-liceo','emp-tab-finanzas-liceo',
     'emp-tab-dashboard-g','emp-tab-productos','emp-tab-empleados','emp-tab-libro'
   ];
   // alias → panel id (for tabs that need remapping)
   const panelMap={
     'emp-bodega':           'emp-tab-bodega',
-    'emp-salsas':           'emp-tab-salsas',
+    'emp-recetas':          'emp-tab-recetas',
     'emp-planificacion':    'emp-tab-planificacion',
     'emp-empleados-liceo':  'emp-tab-empleados-liceo',
     'emp-finanzas-liceo':   'emp-tab-finanzas-liceo',
@@ -2337,12 +3450,12 @@ function showEmpresaTab(tabId){
   // Render content
   if(tabId==='emp-dashboard') renderEmpresaDashboard();
   else if(tabId==='emp-bodega') renderBodega();
-  else if(tabId==='emp-salsas') renderSalsas();
+  else if(tabId==='emp-recetas') renderRecetas();
   else if(tabId==='emp-planificacion') calcularCompras();
-  else if(tabId==='emp-empleados-liceo') renderEmpleados();
+  else if(tabId==='emp-empleados-liceo'){ renderEmpleados(); renderDetalleVentasLiceo(); }
   else if(tabId==='emp-finanzas-liceo') renderFinanzas();
   else if(tabId==='emp-productos') renderEmpresaProductos();
-  else if(tabId==='emp-empleados') renderEmpresaEmpleados();
+  else if(tabId==='emp-empleados'){ renderEmpresaEmpleados(); renderDetalleVentasEmpresa(); }
   else if(tabId==='emp-libro') renderEmpresaLibro();
 }
 
@@ -2599,24 +3712,58 @@ function renderLiceoDashboard(){
 
 function renderEmpresaProductos(){
   const emp=getEmpAct(); if(!emp) return;
+  const checkbox=document.getElementById('ei-toggle-insumos');
+  if(checkbox) checkbox.checked=!!emp.usaInsumos;
+  const wrap=document.getElementById('ei-bodega-insumos-wrap');
+  if(wrap) wrap.style.display=emp.usaInsumos?'block':'none';
+  if(emp.usaInsumos) renderInsumosEmpresa();
   const lista=document.getElementById('ei-lista-productos');
   if(!emp.productos||!emp.productos.length){
     lista.innerHTML='<p class="text-sm" style="color:var(--muted)">Sin productos. Agrega uno.</p>';return;
   }
   lista.innerHTML=emp.productos.map(prod=>{
-    const cf=(prod.costoProd||0)+(prod.comision||0);
+    if(!prod.receta) prod.receta={};
+    // Costo de fabricación: si usa insumos, se DERIVA de la receta (no se tipea a mano).
+    // Si no usa insumos, sigue siendo costoProd manual como siempre.
+    const costoFab=emp.usaInsumos
+      ? Object.entries(prod.receta).reduce((s,[insId,cant])=>{
+          const ins=(emp.insumos||[]).find(i=>i.id==insId);
+          if(!ins) return s;
+          return s+cu(ins)*cant;
+        },0)
+      : (prod.costoProd||0);
+    const cf=costoFab+(prod.comision||0);
     const gan=(prod.precioVenta||0)-cf;
+    const recetaRows=emp.usaInsumos?(emp.insumos||[]).map(ins=>{
+      const cant=prod.receta[ins.id]||0;
+      return `<div class="flex items-center gap-1">
+        <span class="text-xs flex-1" style="color:var(--muted)">${ins.nombre}</span>
+        <input type="number" value="${cant}" min="0" style="width:55px;text-align:right;font-size:11px" onchange="
+          const r=getEmpAct().productos.find(p=>p.id==${prod.id}).receta;
+          const v=+this.value;
+          if(v>0) r[${ins.id}]=v; else delete r[${ins.id}];
+          renderEmpresaProductos();">
+        <span class="text-xs" style="color:var(--muted)">${ins.unidad==='Gramos'?'g':'u'}</span>
+      </div>`;
+    }).join(''):'';
     return `<div class="card2 p-3">
       <div class="flex items-center gap-3 flex-wrap justify-between">
         <input type="text" value="${prod.nombre}" style="font-weight:600;font-size:13px;background:transparent;border:none;color:var(--text);flex:1;min-width:120px" onchange="getEmpAct().productos.find(p=>p.id==${prod.id}).nombre=this.value">
         <div class="flex items-center gap-3 flex-wrap">
           <div class="flex items-center gap-1"><span class="text-xs" style="color:var(--muted)">Precio</span><input type="number" value="${prod.precioVenta||0}" min="0" style="width:75px;text-align:right" onchange="getEmpAct().productos.find(p=>p.id==${prod.id}).precioVenta=+this.value;renderEmpresaProductos()"></div>
-          <div class="flex items-center gap-1"><span class="text-xs" style="color:var(--muted)">Costo</span><input type="number" value="${prod.costoProd||0}" min="0" style="width:75px;text-align:right" onchange="getEmpAct().productos.find(p=>p.id==${prod.id}).costoProd=+this.value;renderEmpresaProductos()"></div>
+          ${emp.usaInsumos?`<div class="flex items-center gap-1"><span class="text-xs" style="color:var(--muted)">Costo fab. (receta)</span><span class="text-xs font-semibold">${fmt(costoFab)}</span></div>`
+            :`<div class="flex items-center gap-1"><span class="text-xs" style="color:var(--muted)">Costo</span><input type="number" value="${prod.costoProd||0}" min="0" style="width:75px;text-align:right" onchange="getEmpAct().productos.find(p=>p.id==${prod.id}).costoProd=+this.value;renderEmpresaProductos()"></div>`}
           <div class="flex items-center gap-1"><span class="text-xs" style="color:var(--muted)">Comisión</span><input type="number" value="${prod.comision||0}" min="0" style="width:65px;text-align:right" onchange="getEmpAct().productos.find(p=>p.id==${prod.id}).comision=+this.value;renderEmpresaProductos()"></div>
           <div class="flex items-center gap-1"><span class="text-xs" style="color:var(--muted)">Bodega</span><input type="number" value="${prod.stockTerminado||0}" min="0" style="width:65px;text-align:right" onchange="getEmpAct().productos.find(p=>p.id==${prod.id}).stockTerminado=+this.value;renderEmpresaProductos()"></div>
+          ${emp.usaInsumos?`<div class="flex items-center gap-1"><span class="text-xs" style="color:var(--muted)">Meta sem.</span><input type="number" value="${prod.meta||0}" min="0" style="width:60px;text-align:right" onchange="getEmpAct().productos.find(p=>p.id==${prod.id}).meta=+this.value;renderEmpresaProductos()"></div>`:''}
+          <button onclick="ventaRapida(${prod.id},getEmpAct())" class="btn-ghost" style="padding:3px 7px;font-size:10px" title="Venta directa sin comisión">💵</button>
           <button onclick="getEmpAct().productos=getEmpAct().productos.filter(p=>p.id!==${prod.id});renderEmpresaProductos()" class="btn-danger" style="padding:3px 7px;font-size:11px">✕</button>
         </div>
       </div>
+      ${emp.usaInsumos?`<div class="mt-2 p-2 space-y-1" style="background:var(--surface3);border-radius:6px">
+        <div class="text-xs font-semibold mb-1" style="color:var(--muted)">Receta (cantidad por unidad de producto)</div>
+        ${recetaRows||'<p class="text-xs" style="color:var(--muted)">Agrega insumos en la bodega de la empresa primero.</p>'}
+      </div>`:''}
       <div class="flex gap-2 mt-2 flex-wrap">
         <span class="tag-red">Fab+Com: ${fmt(cf)}</span>
         <span class="tag-green">Ganancia: ${fmt(gan)}</span>
@@ -2626,13 +3773,45 @@ function renderEmpresaProductos(){
   }).join('');
 }
 
+// ══════════════════════════════════════════════════
+// DETALLE DE PRODUCTOS VENDIDOS — Empresa genérica
+// ══════════════════════════════════════════════════
+function renderDetalleVentasEmpresa(){
+  const cont=document.getElementById('detalle-ventas-empresa');
+  if(!cont) return;
+  const emp=getEmpAct(); if(!emp) return;
+  const filas=(emp.productos||[]).map(p=>{
+    const clave=emp.nombre+' — '+p.id;
+    const st=statsVentaProducto(clave);
+    if(!st) return null;
+    return `<tr>
+      <td class="td" data-label="Producto" style="font-weight:600">${p.nombre}</td>
+      <td class="td" data-label="Total">${st.total} u</td>
+      <td class="td" data-label="Promedio/día">${st.promedio.toFixed(1)} u</td>
+      <td class="td" data-label="Máximo">${st.max} u</td>
+      <td class="td" data-label="Mínimo">${st.min} u</td>
+      <td class="td" data-label="Días con venta">${st.diasConDato}</td>
+    </tr>`;
+  }).filter(Boolean);
+  if(!filas.length){
+    cont.innerHTML='<p class="text-xs text-center py-3" style="color:var(--muted)">Sin historial de ventas todavía — se va llenando a medida que cobrás.</p>';
+    return;
+  }
+  cont.innerHTML=`<div class="overflow-x-auto"><table class="tbl-mobile-cards" style="width:100%">
+    <thead><tr><th class="th">Producto</th><th class="th">Total</th><th class="th">Promedio/día</th><th class="th">Máximo</th><th class="th">Mínimo</th><th class="th">Días con venta</th></tr></thead>
+    <tbody>${filas.join('')}</tbody>
+  </table></div>`;
+}
+
 function renderEmpresaEmpleados(){
   const emp=getEmpAct(); if(!emp) return;
   const lista=document.getElementById('ei-lista-empleados');
   if(!emp.empleados||!emp.empleados.length){
     lista.innerHTML='<div class="card p-6 text-center" style="color:var(--muted)">Sin empleados</div>';return;
   }
+  try{
   lista.innerHTML=emp.empleados.map(e=>{
+    e.entregados=e.entregados||{}; e.almuerzo=e.almuerzo||{}; e.descuentos=e.descuentos||[]; e.vueltos=e.vueltos||[]; e.stockDescontado=e.stockDescontado||{};
     const sinCom=!!e.sinComision;
     const tVend=(emp.productos||[]).reduce((s,p)=>s+Math.max(0,(e.entregados[p.id]||0)-(e.almuerzo[p.id]||0)),0);
     const tIng=(emp.productos||[]).reduce((s,p)=>s+Math.max(0,(e.entregados[p.id]||0)-(e.almuerzo[p.id]||0))*p.precioVenta,0);
@@ -2683,6 +3862,10 @@ function renderEmpresaEmpleados(){
       </div>
     </div>`;
   }).join('');
+  }catch(err){
+    lista.innerHTML=`<div class="card2 p-3" style="border-color:var(--danger)"><p class="text-xs font-semibold" style="color:var(--danger)">⚠️ Error mostrando empleados: ${err.message}</p></div>`;
+    console.error('renderEmpresaEmpleados:',err);
+  }
 }
 function toggleEmpBodyEi(id){const b=document.getElementById(id);if(b) b.classList.toggle('open');}
 
@@ -2709,6 +3892,7 @@ function crearEmpresaLiceo(){
     S.empresas.push({
       id:Date.now(),nombre,soloLibro:false,
       libro:[],historial:[],empleados:[],productos:[],
+      usaInsumos:false,insumos:[], // bodega de materia prima propia, opcional — se activa desde el panel de la empresa
       nextId:1,semanaActual:getNombreSemana()
     });
     guardarEstado();renderEmpresasGrid();toast('Empresa tipo Liceo creada ✓');
@@ -2732,22 +3916,84 @@ function crearEmpresa(){
     S.empresas.push({
       id:Date.now(),nombre,soloLibro,
       libro:[],historial:[],empleados:[],productos:[],
+      usaInsumos:false,insumos:[], // bodega de materia prima propia, opcional — se activa desde el panel de la empresa
       nextId:1,semanaActual:getNombreSemana()
     });
     renderEmpresasGrid();toast('Empresa creada ✓');
   });
 }
 
+function toggleUsaInsumosEmpresa(checked){
+  const emp=getEmpAct(); if(!emp) return;
+  emp.usaInsumos=checked;
+  if(!emp.insumos) emp.insumos=[];
+  document.getElementById('ei-bodega-insumos-wrap').style.display=checked?'block':'none';
+  guardarEstado();
+  renderInsumosEmpresa();
+  renderEmpresaProductos();
+}
+
+function agregarInsumoEmpresa(){
+  const emp=getEmpAct(); if(!emp) return;
+  if(!emp.insumos) emp.insumos=[];
+  emp.insumos.push({id:Date.now(),nombre:'Nuevo insumo',costoPaquete:0,cantPaquete:1,unidad:'Gramos',stock:0});
+  guardarEstado();
+  renderInsumosEmpresa();
+}
+
+function renderInsumosEmpresa(){
+  const emp=getEmpAct(); if(!emp) return;
+  const cont=document.getElementById('ei-lista-insumos');
+  if(!cont) return;
+  const checkbox=document.getElementById('ei-toggle-insumos');
+  if(checkbox) checkbox.checked=!!emp.usaInsumos;
+  const wrap=document.getElementById('ei-bodega-insumos-wrap');
+  if(wrap) wrap.style.display=emp.usaInsumos?'block':'none';
+  const dlLugares=document.getElementById('dl-lugares-compra');
+  if(dlLugares){
+    const lugaresConocidos=[...new Set([
+      ...S.insumos.map(i=>i.lugarCompra),
+      ...S.empresas.flatMap(e=>(e.insumos||[]).map(i=>i.lugarCompra))
+    ].filter(Boolean))];
+    dlLugares.innerHTML=lugaresConocidos.map(l=>`<option value="${l}">`).join('');
+  }
+  const DIAS_SEMANA=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+  if(!emp.insumos||!emp.insumos.length){
+    cont.innerHTML='<p class="text-xs" style="color:var(--muted)">Sin insumos. Agrega uno.</p>';return;
+  }
+  cont.innerHTML=emp.insumos.map(ins=>{
+    const costoUnit=cu(ins);
+    return `<div class="card2 p-2 flex items-center gap-2 flex-wrap">
+      <input type="text" value="${ins.nombre}" style="font-size:12px;font-weight:600;background:transparent;border:none;color:var(--text);flex:1;min-width:100px" onchange="getEmpAct().insumos.find(i=>i.id==${ins.id}).nombre=this.value;guardarEstado()">
+      <div class="flex items-center gap-1"><span class="text-xs" style="color:var(--muted)">Costo paq.</span><input type="number" value="${ins.costoPaquete||0}" min="0" style="width:70px;text-align:right" onchange="getEmpAct().insumos.find(i=>i.id==${ins.id}).costoPaquete=+this.value;guardarEstado();renderInsumosEmpresa();renderEmpresaProductos()"></div>
+      <div class="flex items-center gap-1"><span class="text-xs" style="color:var(--muted)">Cant. paq.</span><input type="number" value="${ins.cantPaquete||1}" min="0.01" style="width:65px;text-align:right" onchange="getEmpAct().insumos.find(i=>i.id==${ins.id}).cantPaquete=+this.value;guardarEstado();renderInsumosEmpresa();renderEmpresaProductos()"></div>
+      <select style="width:85px;font-size:11px" onchange="getEmpAct().insumos.find(i=>i.id==${ins.id}).unidad=this.value;guardarEstado()">
+        <option value="Gramos" ${ins.unidad==='Gramos'?'selected':''}>Gramos</option>
+        <option value="Unidad" ${ins.unidad==='Unidad'?'selected':''}>Unidad</option>
+      </select>
+      <div class="flex items-center gap-1"><span class="text-xs" style="color:var(--muted)">Stock</span><input type="number" value="${ins.stock||0}" min="0" style="width:65px;text-align:right" onchange="getEmpAct().insumos.find(i=>i.id==${ins.id}).stock=+this.value;guardarEstado()"></div>
+      <div class="flex items-center gap-1"><span class="text-xs" style="color:var(--muted)">Lugar</span><input type="text" list="dl-lugares-compra" value="${ins.lugarCompra||''}" placeholder="Ej: Fruna" style="width:80px" onchange="getEmpAct().insumos.find(i=>i.id==${ins.id}).lugarCompra=this.value.trim();guardarEstado()"></div>
+      <select style="width:95px;font-size:11px" onchange="getEmpAct().insumos.find(i=>i.id==${ins.id}).diaCompra=this.value;guardarEstado()">
+        <option value="" ${!ins.diaCompra?'selected':''}>Sin asignar</option>
+        ${DIAS_SEMANA.map(d=>`<option value="${d}" ${ins.diaCompra===d?'selected':''}>${d}</option>`).join('')}
+      </select>
+      <span class="text-xs" style="color:var(--muted)">$${costoUnit.toFixed(2)}/u</span>
+      <button onclick="modalProveedoresInsumo(${ins.id},getEmpAct())" class="btn-ghost" style="padding:2px 6px;font-size:10px" title="Proveedores">🚚${(ins.proveedores||[]).length?' '+ins.proveedores.length:''}</button>
+      <button onclick="getEmpAct().insumos=getEmpAct().insumos.filter(i=>i.id!==${ins.id});guardarEstado();renderInsumosEmpresa();renderEmpresaProductos()" class="btn-danger" style="padding:2px 6px;font-size:10px">✕</button>
+    </div>`;
+  }).join('');
+}
+
 function agregarProductoEmpresa(){
   const emp=getEmpAct(); if(!emp) return;
   if(!emp.productos) emp.productos=[];
-  emp.productos.push({id:Date.now(),nombre:'Nuevo producto',precioVenta:0,costoProd:0,comision:0,stockTerminado:0});
+  emp.productos.push({id:Date.now(),nombre:'Nuevo producto',precioVenta:0,costoProd:0,comision:0,stockTerminado:0,receta:{},meta:0});
   renderEmpresaProductos();
 }
 function agregarEmpleadoEmpresa(){
   const emp=getEmpAct(); if(!emp) return;
   if(!emp.empleados) emp.empleados=[];
-  emp.empleados.push({id:Date.now(),nombre:'Nuevo empleado',sinComision:false,entregados:{},almuerzo:{},vendidos:{},stockDescontado:{}});
+  emp.empleados.push({id:Date.now(),nombre:'Nuevo empleado',sinComision:false,entregados:{},almuerzo:{},vendidos:{},stockDescontado:{},descuentos:[],vueltos:[]});
   renderEmpresaEmpleados();
 }
 function empIngreso(){
@@ -2785,12 +4031,21 @@ function ingresoEmpEmpleado(empId){
   const sinCom=!!e.sinComision;
   const tBruto=(empObj.productos||[]).reduce((s,p)=>s+Math.max(0,(e.entregados[p.id]||0)-(e.almuerzo[p.id]||0))*p.precioVenta,0);
   const tCom=sinCom?0:(empObj.productos||[]).reduce((s,p)=>s+Math.max(0,(e.entregados[p.id]||0)-(e.almuerzo[p.id]||0))*(p.comision||0),0);
+  // ARKHE.Debt: deudas activas del empleado EN ESTA EMPRESA (empresaOrigen debe coincidir, ids se repiten entre empresas)
+  const deudasEmp=(S.deudas||[]).filter(d=>d.deudorTipo==='empleado'&&d.empleadoId===empId&&d.empresaOrigen===empObj.nombre&&_estadoDeuda(d)!=='pagada');
+  const saldoDeudaEmp=deudasEmp.reduce((s,d)=>s+calcularSaldoDeuda(d),0);
+  const cuotaSugerida=Math.min(tCom,saldoDeudaEmp);
+  const hayPropuestaDeuda=!sinCom&&tCom>0&&saldoDeudaEmp>0;
   abrirModal(`Cobrar — ${e.nombre}`,`<div class="space-y-3">
     <div class="card3 p-3 space-y-1 text-sm">
       <div class="flex justify-between"><span style="color:var(--muted)">Total bruto ventas</span><span style="color:var(--accent2)">${fmt(tBruto)}</span></div>
       <div class="flex justify-between font-semibold pt-1" style="border-top:1px solid var(--border)"><span>Debería entregar</span><span style="color:var(--accent)">${fmt(tBruto)}</span></div>
       ${!sinCom?`<div class="flex justify-between text-xs pt-1"><span style="color:var(--muted)">Comisión a pagar</span><span style="color:var(--warn)">${fmt(tCom)}</span></div>`:''}
     </div>
+    ${hayPropuestaDeuda?`<label class="flex items-center gap-2 cursor-pointer" style="background:var(--surface3);border-radius:8px;padding:10px">
+      <input type="checkbox" id="ie-deuda" checked style="accent-color:var(--accent);width:15px;height:15px">
+      <span class="text-xs">💳 ${e.nombre} tiene deuda activa (saldo ${fmt(saldoDeudaEmp)}) — descontar <strong>${fmt(cuotaSugerida)}</strong> de su comisión</span>
+    </label>`:''}
     <div>
       <label class="text-xs" style="color:var(--muted)">Efectivo recibido $</label>
       <input type="number" id="ie-m" value="${Math.round(tBruto)}" min="0" class="mt-1" oninput="
@@ -2807,6 +4062,7 @@ function ingresoEmpEmpleado(empId){
     if(!c||m<=0){toast('Completa campos');return;}
     // Descontar bodega SOLO ahora, al cobrar — no al tipear entregados/almuerzo
     if(!e.stockDescontado) e.stockDescontado={};
+    const vendidoPorProdHoy={};
     (empObj.productos||[]).forEach(p=>{
       const vendidoActual=Math.max(0,(e.entregados[p.id]||0)-(e.almuerzo[p.id]||0));
       const yaDescontado=e.stockDescontado[p.id]||0;
@@ -2815,15 +4071,46 @@ function ingresoEmpEmpleado(empId){
         p.stockTerminado=Math.max(0,(p.stockTerminado||0)-pendiente);
         e.stockDescontado[p.id]=vendidoActual;
       }
+      if(pendiente>0) vendidoPorProdHoy[p.id]=(vendidoPorProdHoy[p.id]||0)+pendiente;
     });
     if(!empObj.nextId) empObj.nextId=1;
     empObj.libro.push({id:empObj.nextId++,fecha:fechaHoy(),concepto:c,tipo:'ingreso',monto:m,origen:e.nombre});
-    if(!sinCom&&tCom>0){
+    // ¿Aplicar descuento de deuda sobre la comisión?
+    const aplicarDeuda=hayPropuestaDeuda&&document.getElementById('ie-deuda')&&document.getElementById('ie-deuda').checked;
+    if(aplicarDeuda&&cuotaSugerida>0){
+      let restante=cuotaSugerida;
+      deudasEmp.forEach(d=>{
+        if(restante<=0) return;
+        const saldoD=calcularSaldoDeuda(d);
+        const abono=Math.min(saldoD,restante);
+        if(abono>0){ d.abonos.push({id:Date.now()+d.id,fecha:fechaHoy(),monto:abono}); restante-=abono; }
+      });
+      const comisionNeta=tCom-cuotaSugerida;
+      if(comisionNeta>0) empObj.libro.push({id:empObj.nextId++,fecha:fechaHoy(),concepto:`Comisión ${e.nombre}`,tipo:'egreso',monto:comisionNeta,origen:e.nombre});
+      toast(`Cobro ✓ — Comisión ${fmt(comisionNeta)} pagada, ${fmt(cuotaSugerida)} abonado a deuda`);
+    } else if(!sinCom&&tCom>0){
       empObj.libro.push({id:empObj.nextId++,fecha:fechaHoy(),concepto:`Comisión ${e.nombre}`,tipo:'egreso',monto:tCom,origen:e.nombre});
       toast(`Cobro ✓ — Comisión ${fmt(tCom)} registrada`);
     } else {
       toast('Cobro registrado ✓');
     }
+    // Snapshot diario consolidado — misma estructura que usa Liceo, para que 'Ventas por día' sume ambos.
+    if(!S.registrosDiarios) S.registrosDiarios=[];
+    const hoyE=fechaHoy();
+    let rdHoyE=S.registrosDiarios.find(r=>r.fecha===hoyE);
+    if(!rdHoyE){rdHoyE={fecha:hoyE,ventasPorEmp:{},totalBruto:0,ventasPorProducto:{},ventasPorEmpleadoProducto:{}};S.registrosDiarios.push(rdHoyE);}
+    if(!rdHoyE.ventasPorProducto) rdHoyE.ventasPorProducto={};
+    if(!rdHoyE.ventasPorEmpleadoProducto) rdHoyE.ventasPorEmpleadoProducto={};
+    const claveEmp_E=empObj.nombre+' — '+e.nombre;
+    rdHoyE.ventasPorEmp[claveEmp_E]=(rdHoyE.ventasPorEmp[claveEmp_E]||0)+m;
+    rdHoyE.totalBruto=(rdHoyE.totalBruto||0)+m;
+    if(!rdHoyE.ventasPorEmpleadoProducto[claveEmp_E]) rdHoyE.ventasPorEmpleadoProducto[claveEmp_E]={};
+    Object.entries(vendidoPorProdHoy).forEach(([pId,cant])=>{
+      const claveProd_E=empObj.nombre+' — '+pId;
+      rdHoyE.ventasPorProducto[claveProd_E]=(rdHoyE.ventasPorProducto[claveProd_E]||0)+cant;
+      rdHoyE.ventasPorEmpleadoProducto[claveEmp_E][pId]=(rdHoyE.ventasPorEmpleadoProducto[claveEmp_E][pId]||0)+cant;
+    });
+    guardarEstado();
     renderEmpresaDashboard();renderEmpresaLibro();renderEmpresasGrid();renderEmpresaProductos();
   });
 }
@@ -2897,7 +4184,7 @@ function traspasarUtilidadesEmpresa(){
 // ya que estos no generan comisión donde enganchar el descuento automático.
 function deudasSinComisionActivas(){
   const ids=S.empleados.filter(e=>e.sinComision).map(e=>e.id);
-  const deudas=(S.deudas||[]).filter(d=>d.deudorTipo==='empleado'&&ids.includes(d.empleadoId)&&_estadoDeuda(d)!=='pagada');
+  const deudas=(S.deudas||[]).filter(d=>d.deudorTipo==='empleado'&&ids.includes(d.empleadoId)&&(d.empresaOrigen||'Liceo')==='Liceo'&&_estadoDeuda(d)!=='pagada');
   const saldoTotal=deudas.reduce((s,d)=>s+calcularSaldoDeuda(d),0);
   return {deudas,saldoTotal};
 }
@@ -2965,7 +4252,8 @@ function cierre_semanal(){
         S.personalMovimientos.push({fecha:fechaHoy(),concepto:`Utilidades Liceo — ${S.semanaActual}`,tipo:'ingreso',monto:montoTraspasado,origen:'Liceo',categoria:'ingreso'});
       }
     }
-    S.libroContable=[];S.nextTxId=1;S.registrosDiarios=[];S.stockMerma=[];
+    S.libroContable=[];S.nextTxId=1;S.stockMerma=[];
+    // registrosDiarios NO se resetea acá: es historial acumulativo consolidado (Liceo+Empresas), no un contador de período.
     S.empleados.forEach(e=>{e.entregados={};e.almuerzo={};e.descuentos=[];e.vueltos=[];e.stockDescontado={};});
     S.semanaActual=getNombreSemana();
     guardarEstado();
@@ -3552,10 +4840,81 @@ function agregarBebida(){
     const insId=Math.max(...S.insumos.map(i=>i.id),0)+1;
     const prodId=S.nextProdId++;
     S.insumos.push({id:insId,nombre:nombre,costoPaquete:costoPaq,cantPaquete:cantPaq,unidad:'Unidades',stock:0,categoria:'bebida',perecible:false,productoVinculadoId:prodId});
-    S.productos.push({id:prodId,nombre:nombre,precioVenta:precio,comision:comision,receta:{[insId]:1},salsas:[],meta:0,stockTerminado:0,fases:[],insumoVinculadoId:insId});
+    S.productos.push({id:prodId,nombre:nombre,precioVenta:precio,comision:comision,receta:{[insId]:1},recetas:[],meta:0,stockTerminado:0,fases:[],insumoVinculadoId:insId});
     guardarEstado();renderBodega();
     toast('Bebida agregada — insumo + producto vinculado ✓');
   });
+}
+
+// ══════════════════════════════════════════════════
+// PROVEEDORES POR INSUMO — varias opciones de compra, una fijada como principal
+// Funciona tanto para Liceo (S.insumos) como para una Empresa con usaInsumos (emp.insumos)
+// ══════════════════════════════════════════════════
+function _buscarInsumo(insId,dueño){
+  const esLiceo=(dueño===null||dueño===undefined||dueño==='liceo');
+  const lista=esLiceo?S.insumos:(dueño.insumos||[]);
+  return lista.find(i=>i.id===insId);
+}
+function _rerenderTrasProveedor(dueño){
+  const esLiceo=(dueño===null||dueño===undefined||dueño==='liceo');
+  if(esLiceo) renderBodega();
+  else { renderInsumosEmpresa(); renderEmpresaProductos(); }
+}
+function modalProveedoresInsumo(insId,dueño){
+  const ins=_buscarInsumo(insId,dueño); if(!ins) return;
+  if(!ins.proveedores) ins.proveedores=[];
+  window._modalProvDueño=dueño; // se guarda para que los botones dentro del modal sepan a qué lista volver
+  abrirModal(`Proveedores — ${ins.nombre}`,_htmlProveedoresInsumo(ins,dueño),null);
+}
+function _htmlProveedoresInsumo(ins,dueño){
+  const dJs=dueño===null||dueño===undefined?'null':(dueño==='liceo'?"'liceo'":'window._modalProvDueño');
+  const filas=(ins.proveedores||[]).map(p=>`
+    <div class="card2 p-2 flex items-center gap-2 flex-wrap">
+      <label class="flex items-center gap-1" style="cursor:pointer">
+        <input type="radio" name="prov-fijado" ${p.fijado?'checked':''} onchange="fijarProveedorInsumo(${ins.id},${p.id},${dJs})" style="accent-color:var(--accent)">
+        <span class="text-xs" style="color:var(--muted)">Principal</span>
+      </label>
+      <input type="text" value="${p.nombre}" placeholder="Proveedor" style="width:90px;font-size:12px" onchange="editarProveedorInsumo(${ins.id},${p.id},'nombre',this.value,${dJs})">
+      <input type="text" value="${p.marca||''}" placeholder="Marca" style="width:80px;font-size:12px" onchange="editarProveedorInsumo(${ins.id},${p.id},'marca',this.value,${dJs})">
+      <input type="text" value="${p.lugar||''}" placeholder="Lugar" style="width:90px;font-size:12px" onchange="editarProveedorInsumo(${ins.id},${p.id},'lugar',this.value,${dJs})">
+      <div class="flex items-center gap-1"><span class="text-xs" style="color:var(--muted)">$</span><input type="number" value="${p.precioPaquete||0}" min="0" style="width:70px;text-align:right" onchange="editarProveedorInsumo(${ins.id},${p.id},'precioPaquete',+this.value,${dJs})"></div>
+      <button onclick="eliminarProveedorInsumo(${ins.id},${p.id},${dJs})" class="btn-danger" style="padding:2px 6px;font-size:10px">✕</button>
+    </div>`).join('');
+  return `<div class="space-y-2">
+    ${filas||'<p class="text-xs" style="color:var(--muted)">Sin proveedores cargados. El costo usa el "Costo paq" de la bodega mientras tanto.</p>'}
+    <button onclick="agregarProveedorInsumo(${ins.id},${dJs})" class="btn-primary" style="width:100%">+ Proveedor</button>
+    <p class="text-xs" style="color:var(--muted)">El marcado como Principal es el que se usa para calcular costo de fabricación y compras. Los demás quedan como respaldo si no podés ir a ese lugar.</p>
+  </div>`;
+}
+function _refrescarModalProveedores(insId,dueño){
+  const ins=_buscarInsumo(insId,dueño); if(!ins) return;
+  document.getElementById('modal-body').innerHTML=_htmlProveedoresInsumo(ins,dueño);
+}
+function agregarProveedorInsumo(insId,dueño){
+  const ins=_buscarInsumo(insId,dueño); if(!ins) return;
+  if(!ins.proveedores) ins.proveedores=[];
+  const esPrimero=ins.proveedores.length===0;
+  ins.proveedores.push({id:Date.now(),nombre:'Nuevo proveedor',marca:'',lugar:'',precioPaquete:ins.costoPaquete||0,fijado:esPrimero});
+  guardarEstado();_refrescarModalProveedores(insId,dueño);_rerenderTrasProveedor(dueño);
+}
+function editarProveedorInsumo(insId,provId,campo,valor,dueño){
+  const ins=_buscarInsumo(insId,dueño); if(!ins) return;
+  const p=(ins.proveedores||[]).find(x=>x.id===provId); if(!p) return;
+  p[campo]=valor;
+  guardarEstado();
+  if(campo==='precioPaquete') _rerenderTrasProveedor(dueño); // el costo unitario mostrado depende de esto
+}
+function fijarProveedorInsumo(insId,provId,dueño){
+  const ins=_buscarInsumo(insId,dueño); if(!ins) return;
+  (ins.proveedores||[]).forEach(p=>{ p.fijado=(p.id===provId); });
+  guardarEstado();_refrescarModalProveedores(insId,dueño);_rerenderTrasProveedor(dueño);
+}
+function eliminarProveedorInsumo(insId,provId,dueño){
+  const ins=_buscarInsumo(insId,dueño); if(!ins) return;
+  const eraFijado=(ins.proveedores||[]).find(p=>p.id===provId)?.fijado;
+  ins.proveedores=(ins.proveedores||[]).filter(p=>p.id!==provId);
+  if(eraFijado&&ins.proveedores.length) ins.proveedores[0].fijado=true;
+  guardarEstado();_refrescarModalProveedores(insId,dueño);_rerenderTrasProveedor(dueño);
 }
 
 function agregarInsumo(){
@@ -3566,13 +4925,13 @@ function agregarInsumo(){
 function eliminarInsumo(id){confirmarEliminar('insumo',id);}
 function agregarProducto(){
   const newId=S.nextProdId++;
-  S.productos.push({id:newId,nombre:'Nuevo producto',precioVenta:0,comision:0,receta:{},salsas:[],meta:0,stockTerminado:0,fases:[]});
+  S.productos.push({id:newId,nombre:'Nuevo producto',precioVenta:0,comision:0,receta:{},recetas:[],meta:0,stockTerminado:0,fases:[]});
   renderBodega();toast('Producto agregado');
 }
 function eliminarProducto(id){confirmarEliminar('producto',id);}
 function agregarEmpleado(){
   const newId=Math.max(...S.empleados.map(e=>e.id),0)+1;
-  S.empleados.push({id:newId,nombre:'Nuevo empleado',sinComision:false,entregados:{},almuerzo:{},descuentos:[],vueltos:[],stockDescontado:{}});
+  S.empleados.push({id:newId,nombre:'Nuevo empleado',sinComision:false,entregados:{},almuerzo:{},descuentos:[],vueltos:[],stockDescontado:{},miniBodega:{}});
   renderEmpleados();toast('Empleado agregado');
 }
 function eliminarEmpleado(id){confirmarEliminar('empleado',id);}
@@ -3614,7 +4973,7 @@ function verVentasDiarias(){
       <td class="td"><div class="flex flex-wrap gap-1">${emps}</div></td>
     </tr>`;
   }).join('');
-  abrirModal('Ventas por día',`
+  abrirModal('Ventas por día — Liceo + Empresas',`
     <div class="overflow-x-auto">
       <table class="w-full"><thead><tr>
         <th class="th text-left">Fecha</th>
@@ -3693,8 +5052,14 @@ function agregarArca(){
 
 function _deudaNombre(d){
   if(d.deudorTipo==='empleado'){
-    const e=S.empleados.find(x=>x.id===d.empleadoId);
-    return e?e.nombre:'(empleado eliminado)';
+    const origen=d.empresaOrigen||'Liceo'; // deudas creadas antes de este cambio no tienen empresaOrigen -> eran siempre de Liceo
+    if(origen==='Liceo'){
+      const e=S.empleados.find(x=>x.id===d.empleadoId);
+      return e?e.nombre+' (Liceo)':'(empleado eliminado)';
+    }
+    const empObj=(S.empresas||[]).find(x=>x.nombre===origen);
+    const e=empObj?(empObj.empleados||[]).find(x=>x.id===d.empleadoId):null;
+    return e?e.nombre+' ('+origen+')':'(empleado eliminado)';
   }
   if(d.deudorExternoId){
     const de=S.deudoresExternos.find(x=>x.id===d.deudorExternoId);
@@ -3726,7 +5091,9 @@ function calcularSaldoDeuda(d){
     guardarEstado();
   }
   const mora=d.moraAplicada?(d.montoMora||0):0;
-  return Math.max(0,base+mora-saldoAbonado);
+  // Redondeo a peso entero: CLP no usa decimales, y sin esto un saldo "matemáticamente 0"
+  // puede quedar en 0.00000000002 por coma flotante y la deuda nunca se marca pagada.
+  return Math.round(Math.max(0,base+mora-saldoAbonado));
 }
 
 function _diasParaVencer(d){
@@ -3746,8 +5113,25 @@ function _estadoDeuda(d){
   return _deudaAbonado(d)>0?'parcial':'activa';
 }
 
+// ══════════════════════════════════════════════════
+// DEUDAS POR VENCER — dentro de 3 días, no vencidas todavía, no pagadas ni archivadas
+// ══════════════════════════════════════════════════
+const DIAS_AVISO_DEUDA=3;
+function deudasProximasAVencer(){
+  return (S.deudas||[]).filter(d=>{
+    const estado=_estadoDeuda(d);
+    if(estado==='pagada'||estado==='archivada'||estado==='vencida') return false;
+    const dias=_diasParaVencer(d);
+    return dias!==null&&dias>=0&&dias<=DIAS_AVISO_DEUDA;
+  }).map(d=>({deuda:d,dias:_diasParaVencer(d),saldo:calcularSaldoDeuda(d),nombre:_deudaNombre(d)}));
+}
+
 function agregarDeuda(){
-  const empOpts=S.empleados.map(e=>`<option value="${e.id}">${e.nombre}</option>`).join('');
+  const empOptsLiceo=S.empleados.map(e=>`<option value="Liceo|${e.id}">${e.nombre} (Liceo)</option>`).join('');
+  const empOptsEmpresas=(S.empresas||[]).filter(emp=>emp.nombre!=='Liceo').map(emp=>
+    (emp.empleados||[]).map(e=>`<option value="${emp.nombre}|${e.id}">${e.nombre} (${emp.nombre})</option>`).join('')
+  ).join('');
+  const empOpts=empOptsLiceo+empOptsEmpresas;
   const hoy=new Date();
   const limiteDefault=new Date(hoy.getTime()+7*86400000).toLocaleDateString('es-CL');
   abrirModal('Nueva deuda',`<div class="space-y-3">
@@ -3810,10 +5194,18 @@ function agregarDeuda(){
         deudorExternoId=nuevo.id;
       } else { toast('Selecciona o ingresa nombre');return; }
     }
+    let empleadoId=null,empresaOrigen=null;
+    if(tipo==='empleado'){
+      const raw=document.getElementById('dd-emp').value;
+      const idx=raw.indexOf('|');
+      empresaOrigen=raw.slice(0,idx);
+      empleadoId=+raw.slice(idx+1);
+    }
     const d={
       id:S.nextDeudaId++,
       deudorTipo:tipo,
-      empleadoId:tipo==='empleado'?+document.getElementById('dd-emp').value:null,
+      empleadoId,
+      empresaOrigen,
       deudorExternoId,
       montoOriginal:monto,
       fechaCreacion:fechaHoy(),
@@ -4304,51 +5696,75 @@ function limpiarHistorialAntiguo(forzar=false){
   });
 }
 
+// ══════════════════════════════════════════════════
+// MIGRACIÓN DE ESQUEMA — única puerta de entrada para
+// completar campos faltantes en S. Debe correr SIEMPRE
+// que se inyecten datos externos en S (carga normal,
+// import de backup, etc). NUNCA duplicar esta lógica.
+// ══════════════════════════════════════════════════
+function migrarEstado() {
+  S.insumos.forEach(i => { if(i.stock===undefined) i.stock=0; });
+  S.productos.forEach(p => { if(!p.salsas) p.salsas=[]; if(!p.fases) p.fases=[]; if(p.merma===undefined) p.merma=0; });
+  S.empleados.forEach(e => { if(!e.entregados) e.entregados={}; if(!e.almuerzo) e.almuerzo={}; if(!e.descuentos) e.descuentos=[]; if(!e.vueltos) e.vueltos=[]; if(e.sinComision===undefined) e.sinComision=false; if(!e.miniBodega) e.miniBodega={}; if(!e.stockDescontado) e.stockDescontado={}; });
+  if(!S.fases) S.fases={1:[],2:[],3:[]};
+  if(!S.salsas) S.salsas=[];
+  S.salsas.forEach(s => { if(s.merma===undefined) s.merma=0; });
+  // ── Migración Salsa → Receta (no destructiva: copia, no borra lo viejo) ──
+  if(!S.recetas){
+    S.recetas=S.salsas.map(s=>({...s})); // copia superficial de cada salsa como receta
+    if(!S.nextRecetaId) S.nextRecetaId=S.nextSalsaId||1;
+  }
+  S.productos.forEach(p=>{
+    if(!p.recetas){
+      p.recetas=(p.salsas||[]).map(sv=>({...sv,recetaId:sv.salsaId})); // copia con el campo renombrado
+    }
+  });
+  if(!S.registrosDiarios) S.registrosDiarios=[];
+  if(!S.libroPersonal) S.libroPersonal=[];
+  if(!S.nextTxPersonalId) S.nextTxPersonalId=1;
+  if(!S.gastossFijos) S.gastossFijos=[];
+  if(!S.divisionDinero) S.divisionDinero=[];
+  if(!S.empresas) S.empresas=[];
+  if(!S.presupuestos) S.presupuestos=[];
+  if(!S.tema) S.tema='oscuro';
+  // Migración de empresas — antes vivía en el "else" del if de arriba
+  // (bug: solo corría si S.tema YA existía). Separada porque no tiene
+  // ninguna relación con el tema visual.
+  S.empresas.forEach(emp=>{ if(emp.soloLibro===undefined) emp.soloLibro=false; if(!emp.historial) emp.historial=[]; if(!emp.empleados) emp.empleados=[]; if(!emp.productos) emp.productos=[]; if(!emp.libro) emp.libro=[]; if(emp.usaInsumos===undefined) emp.usaInsumos=false; if(!emp.insumos) emp.insumos=[]; emp.productos.forEach(p=>{ if(!p.receta) p.receta={}; if(p.meta===undefined) p.meta=0; }); emp.empleados.forEach(e=>{ if(!e.entregados) e.entregados={}; if(!e.almuerzo) e.almuerzo={}; if(!e.descuentos) e.descuentos=[]; if(!e.vueltos) e.vueltos=[]; if(e.sinComision===undefined) e.sinComision=false; if(!e.stockDescontado) e.stockDescontado={}; }); });
+  if(!S.deducciones) S.deducciones=[];
+  if(!S.arcas) S.arcas=[];
+  if(!S.personalMovimientos) S.personalMovimientos=[];
+  if(!S.deudas) S.deudas=[];
+  if(!S.nextDeudaId) S.nextDeudaId=1;
+  if(!S.diasAlertaDeuda) S.diasAlertaDeuda=3;
+  if(S.tasaMoraDeuda==null) S.tasaMoraDeuda=10;
+  if(!S.deudoresExternos) S.deudoresExternos=[];
+  if(!S.nextDeudorExternoId) S.nextDeudorExternoId=1;
+  // Migrar deudas legacy con nombreExterno texto → deudorExternoId
+  S.deudas.forEach(d=>{
+    if(d.deudorTipo==='externo'&&d.nombreExterno&&!d.deudorExternoId){
+      let existente=S.deudoresExternos.find(x=>x.nombre===d.nombreExterno);
+      if(!existente){
+        existente={id:S.nextDeudorExternoId++,nombre:d.nombreExterno,notas:''};
+        S.deudoresExternos.push(existente);
+      }
+      d.deudorExternoId=existente.id;
+    }
+    if(!d.estado) d.estado='activa';
+  });
+  (S.insumos||[]).forEach(ins=>{
+    if(!ins.categoria) ins.categoria='otro';
+    if(ins.perecible===undefined) ins.perecible=false;
+  });
+}
+
 function cargarEstado() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return false;
     const data = JSON.parse(raw);
     Object.assign(S, data);
-    S.insumos.forEach(i => { if(i.stock===undefined) i.stock=0; });
-    S.productos.forEach(p => { if(!p.salsas) p.salsas=[]; if(!p.fases) p.fases=[]; if(p.merma===undefined) p.merma=0; });
-    S.empleados.forEach(e => { if(!e.almuerzo) e.almuerzo={}; if(!e.descuentos) e.descuentos=[]; if(!e.vueltos) e.vueltos=[]; if(e.sinComision===undefined) e.sinComision=false; });
-    if(!S.fases) S.fases={1:[],2:[],3:[]};
-    if(!S.salsas) S.salsas=[];
-    if(!S.registrosDiarios) S.registrosDiarios=[];
-    if(!S.libroPersonal) S.libroPersonal=[];
-    if(!S.nextTxPersonalId) S.nextTxPersonalId=1;
-    if(!S.gastossFijos) S.gastossFijos=[];
-    if(!S.divisionDinero) S.divisionDinero=[];
-    if(!S.empresas) S.empresas=[];
-    if(!S.presupuestos) S.presupuestos=[];
-    if(!S.tema) S.tema='oscuro';
-    else S.empresas.forEach(emp=>{ if(emp.soloLibro===undefined) emp.soloLibro=false; if(!emp.historial) emp.historial=[]; if(!emp.empleados) emp.empleados=[]; if(!emp.productos) emp.productos=[]; if(!emp.libro) emp.libro=[]; });
-    if(!S.deducciones) S.deducciones=[];
-    if(!S.arcas) S.arcas=[];
-    if(!S.personalMovimientos) S.personalMovimientos=[];
-    if(!S.deudas) S.deudas=[];
-    if(!S.nextDeudaId) S.nextDeudaId=1;
-    if(!S.diasAlertaDeuda) S.diasAlertaDeuda=3;
-    if(S.tasaMoraDeuda==null) S.tasaMoraDeuda=10;
-    if(!S.deudoresExternos) S.deudoresExternos=[];
-    if(!S.nextDeudorExternoId) S.nextDeudorExternoId=1;
-    // Migrar deudas legacy con nombreExterno texto → deudorExternoId
-    S.deudas.forEach(d=>{
-      if(d.deudorTipo==='externo'&&d.nombreExterno&&!d.deudorExternoId){
-        let existente=S.deudoresExternos.find(x=>x.nombre===d.nombreExterno);
-        if(!existente){
-          existente={id:S.nextDeudorExternoId++,nombre:d.nombreExterno,notas:''};
-          S.deudoresExternos.push(existente);
-        }
-        d.deudorExternoId=existente.id;
-      }
-      if(!d.estado) d.estado='activa';
-    });
-    (S.insumos||[]).forEach(ins=>{
-      if(!ins.categoria) ins.categoria='otro';
-      if(ins.perecible===undefined) ins.perecible=false;
-    });
+    migrarEstado();
     // Mostrar tamaño storage al cargar
     setTimeout(()=>{
       const sizeEl=document.getElementById('storage-size');
@@ -4406,6 +5822,7 @@ function importarBackup() {
     reader.onload = ev => {
       try {
         Object.assign(S, JSON.parse(ev.target.result));
+        migrarEstado();
         guardarEstado(); renderTodo(); toast('Backup importado ✓');
       } catch(err) { toast('Error al importar archivo'); }
     };
@@ -4415,12 +5832,12 @@ function importarBackup() {
 }
 
 function renderTodo() {
-  renderBodega(); renderEmpleados(); renderSalsas(); renderPersonal(); renderAlertas();
+  renderBodega(); renderEmpleados(); renderRecetas(); renderPersonal(); renderAlertas();
 }
 
 // Parchear renders principales para auto-guardar después de cada cambio
 const _orig = {};
-['renderBodega','renderEmpleados','renderSalsas','renderPersonal','renderFinanzas',
+['renderBodega','renderEmpleados','renderRecetas','renderPersonal','renderFinanzas',
  'renderEmpresaDashboard','renderEmpresasGrid','calcularCompras'].forEach(fn => {
   _orig[fn] = window[fn];
   window[fn] = function(...args) { _orig[fn](...args); autoGuardar(); };
@@ -4465,8 +5882,6 @@ function aplicarTema(){
     document.body.style.color='#0f172a';
     const btn=document.getElementById('btn-tema');
     if(btn) btn.textContent='☀️ Claro';
-    const btnM=document.getElementById('btn-tema-mobile');
-    if(btnM) btnM.textContent='☀️ Claro';
   } else {
     root.style.setProperty('--bg','');
     root.style.setProperty('--surface','');
@@ -4479,8 +5894,6 @@ function aplicarTema(){
     document.body.style.color='';
     const btn=document.getElementById('btn-tema');
     if(btn) btn.textContent='🌙 Oscuro';
-    const btnM=document.getElementById('btn-tema-mobile');
-    if(btnM) btnM.textContent='🌙 Oscuro';
   }
 }
 
@@ -4491,12 +5904,8 @@ if(S.tema) aplicarTema();
 document.getElementById('empresa-interior').style.display='none';
 document.getElementById('emp-tabs-liceo').style.display='none';
 document.getElementById('emp-tabs-generic').style.display='none';
-// Arrancar en panel Personal, salvo que la URL pida ir directo a otra sección
-if(location.hash==='#ventas'){
-  irAVentasDirecto();
-} else {
-  showGlobal('home');
-}
+// Arrancar en panel Personal
+showGlobal('home');
 mostrarEstadoGuardado('ok');
 </script>
 </body>
